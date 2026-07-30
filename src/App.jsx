@@ -1,227 +1,45 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
-  LayoutDashboard,
-  Users,
-  BarChart3,
-  Search,
-  X,
-  Upload,
-  Mail,
-  Activity,
-  Stethoscope,
-  Clock,
-  ShieldCheck,
-  AlertTriangle,
-  ChevronRight,
-  FileText,
-  Bell,
-  Phone,
-  CalendarClock,
-  Settings,
-  UserCircle,
-  ChevronDown,
-  Copy,
-  Check,
-  Sparkles,
-  CalendarPlus,
-  Headphones,
-  Mic,
-  Volume2,
-  TrendingUp,
+  LayoutDashboard, Users, BarChart3, Search, X, Upload, Mail, Activity,
+  Stethoscope, Clock, ShieldCheck, AlertTriangle, ChevronRight, FileText,
+  Bell, Phone, CalendarClock, Settings, UserCircle, ChevronDown, Copy, Check,
+  Sparkles, CalendarPlus, Headphones, Mic, Volume2, TrendingUp,
 } from "lucide-react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  AreaChart,
-  Area,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from "recharts";
 import Papa from "papaparse";
-
-/* ------------------------------------------------------------------ */
-/*  Design tokens                                                      */
-/*  Paper: #F5F5FC   Ink: #17172C   Teal: #0EA394   Amber: #F59E0B     */
-/*  Critical: #E11D48   Sage: #10B981   Line: #E4E3F2                 */
-/* ------------------------------------------------------------------ */
 
 function FontLoader() {
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href =
-      "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap";
     document.head.appendChild(link);
     return () => document.head.removeChild(link);
   }, []);
   return null;
 }
 
-
-function CaduceusSVG() {
-  return (
-    <svg
-      viewBox="0 0 200 300"
-      className="fixed inset-0 w-screen h-screen pointer-events-none"
-      style={{
-        opacity: 0.03,
-        zIndex: 0,
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "600px",
-        height: "600px",
-      }}
-    >
-      <line x1="100" y1="40" x2="100" y2="260" stroke="currentColor" strokeWidth="8" fill="none" />
-      <path d="M 100 80 Q 60 60, 30 90" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round" />
-      <path d="M 100 80 Q 140 60, 170 90" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round" />
-      <path d="M 100 80 Q 50 85, 20 120" stroke="currentColor" strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M 100 80 Q 150 85, 180 120" stroke="currentColor" strokeWidth="5" fill="none" strokeLinecap="round" />
-      <path d="M 100 80 Q 40 110, 25 150" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <path d="M 100 80 Q 160 110, 175 150" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <circle cx="100" cy="35" r="12" fill="none" stroke="currentColor" strokeWidth="6" />
-      <path d="M 85 140 Q 70 150, 75 170 Q 80 185, 65 195" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round" />
-      <path d="M 115 140 Q 130 150, 125 170 Q 120 185, 135 195" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-
-/* ------------------------------------------------------------------ */
-/*  Synthetic dataset generator                                        */
-/*  Column schema matches Kaggle "Healthcare Dataset" (prasad22) so a  */
-/*  real exported CSV can be dropped straight in via Import CSV.       */
-/* ------------------------------------------------------------------ */
-
-const FIRST_NAMES = [
-  "Rahul","Priya","Arjun","Sneha","Vikram","Ananya","Karthik","Divya","Rohan","Meera",
-  "Aditya","Kavya","Suresh","Neha","Manoj","Pooja","Ravi","Shreya","Aakash","Isha",
-  "Sanjay","Lakshmi","Vivek","Nisha","Deepak","Swathi","Harish","Anjali","Nikhil","Radha",
-];
-const LAST_NAMES = [
-  "Kumar","Sharma","Reddy","Iyer","Nair","Rao","Gupta","Menon","Verma","Pillai",
-  "Naidu","Chowdary","Patel","Joshi","Bose","Mehta","Krishnan","Desai","Kapoor","Rajan",
-];
-const HOSPITALS = [
-  "Sunrise Multispeciality Hospital","Fortress Care Institute","Greenfield Medical Center",
-  "St. Mercy General Hospital","Horizon Health Group","Lakeview Regional Hospital",
-  "Meridian Wellness Center","Cedar Grove Hospital","Unity Healthcare Trust","Northstar Medical College",
-];
-const DOCTORS = [
-  "Dr. Aarav Menon","Dr. Kavitha Rao","Dr. Sameer Khan","Dr. Lavanya Iyer","Dr. Rohit Verma",
-  "Dr. Nandini Pillai","Dr. Farhan Ali","Dr. Shalini Nair","Dr. Vikas Malhotra","Dr. Preethi Suresh",
-];
+const FIRST_NAMES = ["Rahul","Priya","Arjun","Sneha","Vikram","Ananya","Karthik","Divya","Rohan","Meera"];
+const LAST_NAMES = ["Kumar","Sharma","Reddy","Iyer","Nair","Rao","Gupta","Menon","Verma","Pillai"];
+const HOSPITALS = ["Sunrise Multispeciality","Fortress Care","Greenfield Medical","St. Mercy","Horizon Health"];
+const DOCTORS = ["Dr. Aarav Menon","Dr. Kavitha Rao","Dr. Sameer Khan","Dr. Lavanya Iyer","Dr. Rohit Verma"];
 const CONDITIONS = ["Diabetes", "Hypertension", "Asthma", "Arthritis", "Cancer", "Obesity"];
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-/* ------------------------------------------------------------------ */
-/*  Milestone 3 — Call Intelligence Module                            */
-/*  Call recording + transcription + sentiment analysis               */
-/* ------------------------------------------------------------------ */
-
-const CALL_MOCK_DATA = [
-  {
-    id: "CALL-001",
-    patientName: "Rahul Kumar",
-    duration: 8,
-    date: "2024-01-22",
-    time: "14:30",
-    doctor: "Dr. Aarav Menon",
-    sentiment: "positive",
-    transcript: "Patient confirmed discharge preparation. All medications reviewed. Follow-up scheduled.",
-    keywords: ["discharge", "medication", "follow-up"],
-    status: "completed",
-  },
-  {
-    id: "CALL-002",
-    patientName: "Priya Sharma",
-    duration: 12,
-    date: "2024-01-22",
-    time: "15:15",
-    doctor: "Dr. Lavanya Iyer",
-    sentiment: "neutral",
-    transcript: "Discussed test results. Patient has questions about hypertension management.",
-    keywords: ["test results", "hypertension", "management"],
-    status: "completed",
-  },
-  {
-    id: "CALL-003",
-    patientName: "Arjun Reddy",
-    duration: 15,
-    date: "2024-01-22",
-    time: "16:45",
-    doctor: "Dr. Sameer Khan",
-    sentiment: "positive",
-    transcript: "Cancer care plan reviewed. Patient feeling confident. Scheduled oncology follow-up.",
-    keywords: ["cancer care", "oncology", "follow-up"],
-    status: "completed",
-  },
-  {
-    id: "CALL-004",
-    patientName: "Sneha Iyer",
-    duration: 10,
-    date: "2024-01-21",
-    time: "11:20",
-    doctor: "Dr. Nandini Pillai",
-    sentiment: "positive",
-    transcript: "Post-discharge check-in. Patient recovering well. No complications reported.",
-    keywords: ["post-discharge", "recovery", "check-in"],
-    status: "completed",
-  },
-  {
-    id: "CALL-005",
-    patientName: "Vikram Menon",
-    duration: 18,
-    date: "2024-01-21",
-    time: "13:45",
-    doctor: "Dr. Farhan Ali",
-    sentiment: "neutral",
-    transcript: "Diabetes management discussion. Reviewed blood sugar logs. Adjusted medication plan.",
-    keywords: ["diabetes", "medication", "blood sugar"],
-    status: "completed",
-  },
-];
-
-function generateCallAnalytics() {
-  return {
-    totalCalls: 47,
-    avgDuration: 11.2,
-    sentimentBreakdown: { positive: 28, neutral: 15, negative: 4 },
-    dailyCalls: [
-      { day: "Mon", calls: 8 },
-      { day: "Tue", calls: 11 },
-      { day: "Wed", calls: 9 },
-      { day: "Thu", calls: 6 },
-      { day: "Fri", calls: 13 },
-    ],
-    topKeywords: ["discharge", "follow-up", "medication", "recovery", "management"],
-  };
-}
 const INSURANCE = ["Aetna", "Blue Cross", "Cigna", "UnitedHealthcare", "Medicare", "Star Health"];
 const ADMISSION_TYPES = ["Emergency", "Elective", "Urgent"];
 const TEST_RESULTS = ["Normal", "Abnormal", "Inconclusive"];
 const MEDICATIONS = ["Aspirin", "Ibuprofen", "Penicillin", "Paracetamol", "Lipitor", "Metformin"];
-const SOURCES = ["Hospital Website", "Referral", "Insurance Portal", "Walk-in", "Telehealth Screening", "Camp/Outreach"];
+const SOURCES = ["Hospital Website", "Referral", "Insurance Portal", "Walk-in", "Telehealth", "Camp"];
 
 function seededRandom(seed) {
   let s = seed;
-  return () => {
-    s = (s * 9301 + 49297) % 233280;
-    return s / 233280;
-  };
+  return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
 }
 
-function pick(rand, arr) {
-  return arr[Math.floor(rand() * arr.length)];
-}
+function pick(rand, arr) { return arr[Math.floor(rand() * arr.length)]; }
 
 function randDate(rand, startDaysAgo, endDaysAgo) {
   const days = Math.floor(rand() * (startDaysAgo - endDaysAgo)) + endDaysAgo;
@@ -245,50 +63,25 @@ function generatePatients(count = 140, seed = 42) {
     discharge.setDate(discharge.getDate() + stay);
     const age = Math.floor(rand() * 70) + 12;
     rows.push({
-      id: `PT-${1000 + i}`,
-      Name: `${pick(rand, FIRST_NAMES)} ${pick(rand, LAST_NAMES)}`,
-      Age: age,
-      Gender: rand() > 0.5 ? "Male" : "Female",
-      "Blood Type": pick(rand, BLOOD_TYPES),
-      "Medical Condition": pick(rand, CONDITIONS),
-      "Date of Admission": fmtDate(admission),
-      Doctor: pick(rand, DOCTORS),
-      Hospital: pick(rand, HOSPITALS),
-      "Insurance Provider": pick(rand, INSURANCE),
-      "Billing Amount": Math.round((rand() * 45000 + 4000) / 10) * 10,
-      "Room Number": Math.floor(rand() * 400) + 100,
-      "Admission Type": pick(rand, ADMISSION_TYPES),
+      id: `PT-${1000 + i}`, Name: `${pick(rand, FIRST_NAMES)} ${pick(rand, LAST_NAMES)}`, Age: age,
+      Gender: rand() > 0.5 ? "Male" : "Female", "Blood Type": pick(rand, BLOOD_TYPES),
+      "Medical Condition": pick(rand, CONDITIONS), "Date of Admission": fmtDate(admission),
+      Doctor: pick(rand, DOCTORS), Hospital: pick(rand, HOSPITALS),
+      "Insurance Provider": pick(rand, INSURANCE), "Billing Amount": Math.round((rand() * 45000 + 4000) / 10) * 10,
+      "Room Number": Math.floor(rand() * 400) + 100, "Admission Type": pick(rand, ADMISSION_TYPES),
       "Discharge Date": rand() > 0.15 ? fmtDate(discharge) : "",
-      Medication: pick(rand, MEDICATIONS),
-      "Test Results": pick(rand, TEST_RESULTS),
-      Source: pick(rand, SOURCES),
-      Phone: `+91-9${Math.floor(rand() * 900000000 + 100000000)}`,
-      Email: undefined,
+      Medication: pick(rand, MEDICATIONS), "Test Results": pick(rand, TEST_RESULTS),
+      Source: pick(rand, SOURCES), Phone: `+91-9${Math.floor(rand() * 900000000 + 100000000)}`,
     });
   }
   return rows;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Scoring + AI recommendation engine (rule-based, transparent)       */
-/* ------------------------------------------------------------------ */
-
-const CONDITION_WEIGHT = {
-  Cancer: 25,
-  Hypertension: 18,
-  Diabetes: 15,
-  Arthritis: 10,
-  Obesity: 10,
-  Asthma: 12,
-};
+const CONDITION_WEIGHT = { Cancer: 25, Hypertension: 18, Diabetes: 15, Arthritis: 10, Obesity: 10, Asthma: 12 };
 const ADMISSION_WEIGHT = { Emergency: 30, Urgent: 20, Elective: 10 };
 const TEST_WEIGHT = { Abnormal: 30, Inconclusive: 16, Normal: 6 };
 
-function daysSince(dateStr) {
-  if (!dateStr) return 999;
-  const d = new Date(dateStr);
-  return Math.floor((Date.now() - d.getTime()) / 86400000);
-}
+function daysSince(dateStr) { if (!dateStr) return 999; const d = new Date(dateStr); return Math.floor((Date.now() - d.getTime()) / 86400000); }
 
 function scorePatient(p) {
   let score = 0;
@@ -319,28 +112,15 @@ const TONE_STYLES = {
 function recommendationsFor(p, score) {
   const recs = [];
   const noDischarge = !p["Discharge Date"];
-  if (p["Admission Type"] === "Emergency" && noDischarge) {
-    recs.push(`Assign care coordinator to ${p.Name.split(" ")[0]} within the hour.`);
-  } else if (p["Admission Type"] === "Urgent") {
-    recs.push("Confirm bed/room allocation and notify attending physician today.");
-  } else {
-    recs.push("Schedule a routine follow-up call within 3 business days.");
-  }
-  if (p["Test Results"] === "Abnormal") {
-    recs.push(`Flag ${p["Test Results"].toLowerCase()} results for ${p.Doctor} for same-day review.`);
-  } else if (p["Test Results"] === "Inconclusive") {
-    recs.push("Recommend repeat diagnostic panel to confirm findings.");
-  }
-  if (p["Medical Condition"] === "Cancer" || p["Medical Condition"] === "Hypertension") {
-    recs.push(`Highlight ${p["Insurance Provider"]} coverage for extended ${p["Medical Condition"].toLowerCase()} care.`);
-  } else {
-    recs.push(`Share personalized care plan for ${p["Medical Condition"].toLowerCase()} management.`);
-  }
-  if (noDischarge) {
-    recs.push("Send discharge-readiness check-in and post-care instructions.");
-  } else {
-    recs.push("Schedule 2-week post-discharge wellness call.");
-  }
+  if (p["Admission Type"] === "Emergency" && noDischarge) recs.push(`Assign care coordinator within the hour.`);
+  else if (p["Admission Type"] === "Urgent") recs.push("Confirm bed allocation and notify physician.");
+  else recs.push("Schedule follow-up call within 3 business days.");
+  if (p["Test Results"] === "Abnormal") recs.push(`Flag ${p["Test Results"].toLowerCase()} results for same-day review.`);
+  else if (p["Test Results"] === "Inconclusive") recs.push("Recommend repeat diagnostic panel.");
+  if (p["Medical Condition"] === "Cancer" || p["Medical Condition"] === "Hypertension") recs.push(`Highlight ${p["Insurance Provider"]} coverage.`);
+  else recs.push(`Share personalized care plan.`);
+  if (noDischarge) recs.push("Send discharge-readiness check-in.");
+  else recs.push("Schedule 2-week post-discharge wellness call.");
   return recs.slice(0, 4);
 }
 
@@ -348,29 +128,11 @@ function outreachEmail(p) {
   const first = p.Name.split(" ")[0];
   return {
     subject: `Following up on your care at ${p.Hospital}`,
-    body:
-`Dear ${p.Name},
-
-I hope you're doing well. I'm reaching out regarding your recent visit to ${p.Hospital} under the care of ${p.Doctor} for ${p["Medical Condition"].toLowerCase()} management.
-
-Based on your latest test results (${p["Test Results"]}), we'd like to schedule a short follow-up to review your care plan and confirm everything is on track with your ${p["Insurance Provider"]} coverage.
-
-Would you be available for a 15-minute call this week, ${first}?
-
-Best regards,
-Patient Care Team
-${p.Hospital}`,
+    body: `Dear ${p.Name},\n\nI hope you're doing well. I'm reaching out regarding your recent visit to ${p.Hospital} under ${p.Doctor} for ${p["Medical Condition"].toLowerCase()} management.\n\nBased on your test results (${p["Test Results"]}), we'd like to schedule a follow-up.\n\nBest regards,\nPatient Care Team`,
   };
 }
 
-/* ------------------------------------------------------------------ */
-/*  Outreach Strategy Engine                                          */
-/*  Module 3 (industry-based messaging) + Module 4 (recommendation    */
-/*  engine: follow-up timing, channel mix, conversion probability)    */
-/* ------------------------------------------------------------------ */
-
 function conversionProbability(p, score) {
-  // deterministic "ML-style" probability derived from score + secondary signals
   let p2 = score;
   if (p["Test Results"] === "Abnormal") p2 += 4;
   if (p["Admission Type"] === "Emergency") p2 += 3;
@@ -379,8 +141,8 @@ function conversionProbability(p, score) {
 }
 
 function followUpTiming(score) {
-  if (score >= 90) return "Contact within 24 hours — highest response rate is same-day, before 11 AM.";
-  if (score >= 70) return "Follow up within 48 hours of admission or last contact.";
+  if (score >= 90) return "Contact within 24 hours — highest response before 11 AM.";
+  if (score >= 70) return "Follow up within 48 hours of admission.";
   if (score >= 50) return "Follow up within 3–5 business days.";
   return "Weekly routine check-in is sufficient.";
 }
@@ -393,29 +155,23 @@ function channelMix(score) {
 }
 
 const CONTENT_STRATEGY = {
-  Cancer: "Share long-term care support resources and connect with an oncology case manager.",
-  Hypertension: "Focus on medication adherence and home blood-pressure monitoring guidance.",
-  Diabetes: "Provide dietary planning resources and glucose-monitoring check-in schedule.",
-  Asthma: "Share trigger-avoidance guidance and confirm inhaler technique at next contact.",
-  Arthritis: "Offer physical therapy referral and mobility support resources.",
-  Obesity: "Share nutrition counseling options and a low-impact activity plan.",
+  Cancer: "Share long-term care support resources.",
+  Hypertension: "Focus on medication adherence guidance.",
+  Diabetes: "Provide dietary planning resources.",
+  Asthma: "Share trigger-avoidance guidance.",
+  Arthritis: "Offer physical therapy referral.",
+  Obesity: "Share nutrition counseling options.",
 };
 
-function contentStrategy(p) {
-  return CONTENT_STRATEGY[p["Medical Condition"]] || "Share a personalized care plan relevant to the patient's diagnosis.";
-}
+function contentStrategy(p) { return CONTENT_STRATEGY[p["Medical Condition"]] || "Share a personalized care plan."; }
 
 function engagementTimeline(p) {
   const events = [];
   events.push({ label: "Lead registered", detail: `via ${p.Source}`, date: p["Date of Admission"] });
-  events.push({ label: "Admitted", detail: `${p["Admission Type"]} admission, Room ${p["Room Number"]}`, date: p["Date of Admission"] });
+  events.push({ label: "Admitted", detail: `${p["Admission Type"]} admission`, date: p["Date of Admission"] });
   events.push({ label: "Diagnostic test", detail: `Result: ${p["Test Results"]}`, date: p["Date of Admission"] });
-  events.push({ label: "Medication administered", detail: p.Medication, date: p["Date of Admission"] });
-  if (p["Discharge Date"]) {
-    events.push({ label: "Discharged", detail: "Care episode closed", date: p["Discharge Date"] });
-  } else {
-    events.push({ label: "Discharge pending", detail: "Still under observation", date: "" });
-  }
+  if (p["Discharge Date"]) events.push({ label: "Discharged", detail: "Care episode closed", date: p["Discharge Date"] });
+  else events.push({ label: "Discharge pending", detail: "Still under observation", date: "" });
   return events;
 }
 
@@ -423,19 +179,15 @@ function callScriptFor(p) {
   const first = p.Name.split(" ")[0];
   const noDischarge = !p["Discharge Date"];
   return {
-    opening: `Hi, may I speak with ${first}? This is calling from ${p.Hospital} regarding your recent ${p["Admission Type"].toLowerCase()} visit with ${p.Doctor}.`,
+    opening: `Hi, may I speak with ${first}? Calling from ${p.Hospital}.`,
     talkingPoints: [
-      `Confirm how ${first} has been feeling since the ${p["Medical Condition"].toLowerCase()} diagnosis/treatment.`,
-      `Reference test results: ${p["Test Results"]}${p["Test Results"] === "Abnormal" ? " — reassure them a physician review is already scheduled." : "."}`,
-      `Mention their ${p["Insurance Provider"]} coverage applies to the recommended follow-up care.`,
-      noDischarge
-        ? "Ask if they have questions about their current admission and expected discharge timeline."
-        : "Check in on recovery since discharge and confirm medication adherence.",
+      `Confirm how ${first} has been feeling.`,
+      `Reference test results: ${p["Test Results"]}.`,
+      `Mention ${p["Insurance Provider"]} coverage.`,
+      noDischarge ? `Ask about expected discharge timeline.` : `Check recovery since discharge.`,
     ],
-    objection: `If hesitant: offer a shorter 10-minute call or a callback at a time that suits ${first} better — avoid pressuring.`,
-    closing: noDischarge
-      ? "Confirm next in-person check-in date before ending the call."
-      : "Offer to schedule a 2-week wellness follow-up before ending the call.",
+    objection: `If hesitant: offer a shorter call at a better time.`,
+    closing: noDischarge ? "Confirm next check-in date." : "Schedule 2-week wellness follow-up.",
   };
 }
 
@@ -445,46 +197,23 @@ function suggestedAppointment(p, score) {
   const offsetDays = score >= 81 ? 1 : score >= 61 ? 3 : score >= 41 ? 7 : 14;
   const date = new Date(base);
   date.setDate(date.getDate() + offsetDays);
-  const type = noDischarge
-    ? "In-Patient Review"
-    : score >= 61
-    ? "Priority Follow-up Consultation"
-    : "Routine Wellness Check-in";
+  const type = noDischarge ? "In-Patient Review" : score >= 61 ? "Priority Follow-up" : "Routine Wellness";
   return { date: fmtDate(date), type, durationMins: type === "In-Patient Review" ? 30 : 15 };
 }
 
-/* ------------------------------------------------------------------ */
-/*  Small UI building blocks                                          */
-/* ------------------------------------------------------------------ */
-
 function PulseDivider() {
-  return (
-    <svg viewBox="0 0 400 24" preserveAspectRatio="none" className="w-full h-5" aria-hidden="true">
-      <polyline
-        points="0,12 130,12 150,3 165,21 180,12 400,12"
-        fill="none"
-        stroke="#0EA394"
-        strokeWidth="1.4"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        opacity="0.55"
-      />
-    </svg>
-  );
+  return <svg viewBox="0 0 400 24" preserveAspectRatio="none" className="w-full h-5" aria-hidden="true">
+    <polyline points="0,12 130,12 150,3 165,21 180,12 400,12" fill="none" stroke="#00D9FF" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" opacity="0.55" />
+  </svg>;
 }
 
 function PriorityBadge({ score }) {
   const p = priorityLabel(score);
   const s = TONE_STYLES[p.tone];
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-      style={{ background: s.bg, color: s.fg }}
-    >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.dot }} />
-      {p.label} · {score}
-    </span>
-  );
+  return <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: s.bg, color: s.fg }}>
+    <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.dot }} />
+    {p.label} · {score}
+  </span>;
 }
 
 const KPI_COLORS = {
@@ -500,30 +229,30 @@ function KpiCard({ label, value, sub, icon: Icon, tone = "teal" }) {
   const c = KPI_COLORS[tone];
   return (
     <div
-      className="bg-white rounded-2xl px-5 py-4 flex flex-col gap-2 transition-transform hover:-translate-y-0.5"
-      style={{ boxShadow: "0 1px 2px rgba(23,23,44,0.04), 0 8px 24px rgba(23,23,44,0.06)" }}
+      className="rounded-2xl px-5 py-4 flex flex-col gap-2 transition-all duration-300 hover:-translate-y-2"
+      style={{
+        background: 'linear-gradient(135deg, rgba(31, 40, 71, 0.8), rgba(42, 31, 75, 0.4))',
+        border: '1px solid rgba(0, 217, 255, 0.15)',
+        boxShadow: '0 8px 24px rgba(139, 92, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.1)',
+      }}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-wide" style={{ color: "#8B8AA6", fontFamily: "'IBM Plex Mono', monospace" }}>
+        <span className="text-xs uppercase tracking-wide" style={{ color: "#7A82A0", fontFamily: "'IBM Plex Mono', monospace" }}>
           {label}
         </span>
         {Icon && (
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: c.bg }}>
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110" style={{ background: c.bg }}>
             <Icon size={14} color={c.fg} />
           </div>
         )}
       </div>
-      <span className="text-3xl" style={{ fontFamily: "'Fraunces', serif", fontWeight: 600, color: "#17172C" }}>
+      <span className="text-3xl" style={{ fontFamily: "'Fraunces', serif", fontWeight: 600, color: "#F0F4FF" }}>
         {value}
       </span>
-      {sub && <span className="text-xs" style={{ color: "#8B8AA6" }}>{sub}</span>}
+      {sub && <span className="text-xs" style={{ color: "#7A82A0" }}>{sub}</span>}
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/*  Main App                                                            */
-/* ------------------------------------------------------------------ */
 
 export default function VitalLeadApp() {
   const [patients, setPatients] = useState(() => generatePatients(140));
@@ -539,21 +268,16 @@ export default function VitalLeadApp() {
   const fileRef = useRef(null);
 
   const enriched = useMemo(
-    () =>
-      patients.map((p) => {
-        const score = scorePatient(p);
-        return { ...p, score, priority: priorityLabel(score) };
-      }),
+    () => patients.map((p) => {
+      const score = scorePatient(p);
+      return { ...p, score, priority: priorityLabel(score) };
+    }),
     [patients]
   );
 
   const filtered = useMemo(() => {
     return enriched.filter((p) => {
-      const matchesQuery =
-        query.trim() === "" ||
-        p.Name.toLowerCase().includes(query.toLowerCase()) ||
-        p.Hospital.toLowerCase().includes(query.toLowerCase()) ||
-        p.id.toLowerCase().includes(query.toLowerCase());
+      const matchesQuery = query.trim() === "" || p.Name.toLowerCase().includes(query.toLowerCase()) || p.Hospital.toLowerCase().includes(query.toLowerCase());
       const matchesCondition = conditionFilter === "All" || p["Medical Condition"] === conditionFilter;
       const matchesPriority = priorityFilter === "All" || p.priority.label === priorityFilter;
       return matchesQuery && matchesCondition && matchesPriority;
@@ -571,17 +295,7 @@ export default function VitalLeadApp() {
     const followUpsToday = enriched.filter((p) => !p["Discharge Date"] && daysSince(p["Date of Admission"]) < 14).length;
     const totalBilling = enriched.reduce((sum, p) => sum + Number(p["Billing Amount"] || 0), 0);
     const avgBilling = totalBilling / (total || 1);
-    return {
-      total,
-      critical,
-      activeAdmissions,
-      qualified,
-      conversionRate,
-      emailsGenerated,
-      followUpsToday,
-      totalBilling,
-      avgBilling,
-    };
+    return { total, critical, activeAdmissions, qualified, conversionRate, emailsGenerated, followUpsToday, totalBilling, avgBilling };
   }, [enriched]);
 
   const billingTrend = useMemo(() => {
@@ -592,34 +306,25 @@ export default function VitalLeadApp() {
       const month = d.slice(0, 7);
       map[month] = (map[month] || 0) + Number(p["Billing Amount"] || 0);
     });
-    return Object.entries(map)
-      .sort(([a], [b]) => (a > b ? 1 : -1))
-      .slice(-9)
-      .map(([month, value]) => ({ month, value: Math.round(value) }));
+    return Object.entries(map).sort(([a], [b]) => (a > b ? 1 : -1)).slice(-9).map(([month, value]) => ({ month, value: Math.round(value) }));
   }, [enriched]);
 
   const conditionData = useMemo(() => {
     const map = {};
-    enriched.forEach((p) => {
-      map[p["Medical Condition"]] = (map[p["Medical Condition"]] || 0) + 1;
-    });
+    enriched.forEach((p) => { map[p["Medical Condition"]] = (map[p["Medical Condition"]] || 0) + 1; });
     return Object.entries(map).map(([name, value]) => ({ name, value }));
   }, [enriched]);
 
   const admissionTypeData = useMemo(() => {
     const map = {};
-    enriched.forEach((p) => {
-      map[p["Admission Type"]] = (map[p["Admission Type"]] || 0) + 1;
-    });
+    enriched.forEach((p) => { map[p["Admission Type"]] = (map[p["Admission Type"]] || 0) + 1; });
     return Object.entries(map).map(([name, value]) => ({ name, value }));
   }, [enriched]);
 
   const priorityData = useMemo(() => {
     const order = ["Critical Priority", "High Priority", "Moderate Priority", "Routine"];
     const map = {};
-    enriched.forEach((p) => {
-      map[p.priority.label] = (map[p.priority.label] || 0) + 1;
-    });
+    enriched.forEach((p) => { map[p.priority.label] = (map[p.priority.label] || 0) + 1; });
     return order.map((name) => ({ name, value: map[name] || 0 }));
   }, [enriched]);
 
@@ -629,37 +334,20 @@ export default function VitalLeadApp() {
     const file = e.target.files?.[0];
     if (!file) return;
     Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
+      header: true, skipEmptyLines: true,
       complete: (results) => {
-        const rows = results.data
-          .filter((r) => r.Name)
-          .map((r, i) => ({
-            id: `PT-${2000 + i}`,
-            Name: r.Name,
-            Age: Number(r.Age) || 0,
-            Gender: r.Gender || "Unknown",
-            "Blood Type": r["Blood Type"] || "—",
-            "Medical Condition": r["Medical Condition"] || "Unspecified",
-            "Date of Admission": r["Date of Admission"] || "",
-            Doctor: r.Doctor || "Unassigned",
-            Hospital: r.Hospital || "Unknown Facility",
-            "Insurance Provider": r["Insurance Provider"] || "Self-pay",
-            "Billing Amount": Number(r["Billing Amount"]) || 0,
-            "Room Number": r["Room Number"] || "—",
-            "Admission Type": r["Admission Type"] || "Elective",
-            "Discharge Date": r["Discharge Date"] || "",
-            Medication: r.Medication || "—",
-            "Test Results": r["Test Results"] || "Normal",
-            Source: "Imported CSV",
-            Phone: r.Phone || "—",
-          }));
-        if (rows.length) {
-          setPatients(rows);
-          setImportMsg(`Imported ${rows.length} patient records.`);
-        } else {
-          setImportMsg("No valid rows found — check the CSV headers match the schema.");
-        }
+        const rows = results.data.filter((r) => r.Name).map((r, i) => ({
+          id: `PT-${2000 + i}`, Name: r.Name, Age: Number(r.Age) || 0, Gender: r.Gender || "Unknown",
+          "Blood Type": r["Blood Type"] || "—", "Medical Condition": r["Medical Condition"] || "Unspecified",
+          "Date of Admission": r["Date of Admission"] || "", Doctor: r.Doctor || "Unassigned",
+          Hospital: r.Hospital || "Unknown Facility", "Insurance Provider": r["Insurance Provider"] || "Self-pay",
+          "Billing Amount": Number(r["Billing Amount"]) || 0, "Room Number": r["Room Number"] || "—",
+          "Admission Type": r["Admission Type"] || "Elective", "Discharge Date": r["Discharge Date"] || "",
+          Medication: r.Medication || "—", "Test Results": r["Test Results"] || "Normal",
+          Source: "Imported CSV", Phone: r.Phone || "—",
+        }));
+        if (rows.length) { setPatients(rows); setImportMsg(`Imported ${rows.length} patient records.`); }
+        else { setImportMsg("No valid rows found."); }
         setTimeout(() => setImportMsg(""), 4000);
       },
     });
@@ -681,251 +369,97 @@ export default function VitalLeadApp() {
     const critical = enriched.filter((p) => p.priority.tone === "critical").length;
     const pendingDischarge = enriched.filter((p) => !p["Discharge Date"]).length;
     return [
-      { text: `${critical} patients flagged Critical Priority — need contact today`, tone: "critical" },
-      { text: `${pendingDischarge} patients still admitted, awaiting discharge review`, tone: "moderate" },
-      { text: "CSV import ready — schema matches Kaggle Healthcare Dataset", tone: "routine" },
+      { text: `${critical} patients flagged Critical Priority`, tone: "critical" },
+      { text: `${pendingDischarge} patients still admitted`, tone: "moderate" },
+      { text: "CSV import ready", tone: "routine" },
     ];
   }, [enriched]);
 
   return (
-    <div
-      className="min-h-screen w-full flex"
-      style={{ background: "#F5F5FC", color: "#17172C", fontFamily: "'Inter', sans-serif" }}
-    >
+    <div className="min-h-screen w-full flex" style={{ background: "linear-gradient(135deg, #0A0E27 0%, #151B3E 50%, #0F1229 100%)", color: "#F0F4FF", fontFamily: "'Inter', sans-serif" }}>
       <FontLoader />
-      <CaduceusSVG />
-      {/* Sidebar */}
-      <aside
-        className="w-60 shrink-0 flex flex-col py-6 px-4"
-        style={{
-          background: "linear-gradient(180deg, #0F1629 0%, #1A1F4B 50%, #2D1B69 100%)",
-          boxShadow: "2px 0 20px rgba(124, 92, 255, 0.15)",
-        }}
-      >
-        <div className="flex items-center gap-2 px-1 mb-1">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #16E0BD, #7C5CFF)" }}
-          >
-            <Activity size={17} color="#12122B" />
+      <aside className="w-60 shrink-0 flex flex-col py-6 px-4" style={{ background: "linear-gradient(180deg, #0F1629 0%, #1A1F4B 50%, #2D1B69 100%)", boxShadow: "2px 0 20px rgba(124, 92, 255, 0.15)" }}>
+        <div className="flex items-center gap-2 px-1 mb-6">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D9FF, #8B5CF6)" }}>
+            <Activity size={17} color="#0A0E27" />
           </div>
-          <span style={{ fontFamily: "'Fraunces', serif", fontSize: "1.25rem", fontWeight: 600, color: "#FAFAFF" }}>
-            VitalLead
-          </span>
+          <span style={{ fontFamily: "'Fraunces', serif", fontSize: "1.25rem", fontWeight: 600, color: "#F0F4FF" }}>VitalLead</span>
         </div>
-        <span className="px-1 text-xs mb-6" style={{ color: "#9C9BD6" }}>
-          Patient Intake &amp; Lead Intelligence
-        </span>
-
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = view === item.key;
             return (
-              <button
-                key={item.key}
-                onClick={() => setView(item.key)}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-all"
+              <button key={item.key} onClick={() => setView(item.key)} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left transition-all"
                 style={{
-                  background: active ? "linear-gradient(90deg, #16E0BD, #7C5CFF)" : "transparent",
-                  color: active ? "#12122B" : "#C7C6EA",
+                  background: active ? "linear-gradient(90deg, #00D9FF, #8B5CF6)" : "transparent",
+                  color: active ? "#0A0E27" : "#C7C6EA",
                   fontWeight: active ? 700 : 500,
-                  boxShadow: active ? "0 0 20px rgba(124,92,255,0.6), inset 0 0 20px rgba(124,92,255,0.2)" : "none",
-                  border: active ? "1px solid rgba(22, 224, 189, 0.3)" : "none",
-                  transition: "all 0.3s ease",
-                }}
-              >
+                  boxShadow: active ? "0 0 20px rgba(139,92,255,0.6), inset 0 0 20px rgba(139,92,255,0.2)" : "none",
+                  border: active ? "1px solid rgba(0, 217, 255, 0.3)" : "none",
+                }}>
                 <Icon size={16} />
                 {item.label}
               </button>
             );
           })}
         </nav>
-
         <div className="mt-auto pt-6">
-          <button
-            onClick={() => fileRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium"
-            style={{ color: "#12122B", background: "linear-gradient(90deg, #16E0BD, #7C5CFF)" }}
-          >
+          <button onClick={() => fileRef.current?.click()} className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium" style={{ color: "#0A0E27", background: "linear-gradient(90deg, #00D9FF, #8B5CF6)" }}>
             <Upload size={15} />
             Import CSV
           </button>
           <input ref={fileRef} type="file" accept=".csv" onChange={handleImport} className="hidden" />
-          {importMsg && (
-            <p className="text-xs mt-2 text-center" style={{ color: "#5EEAD4" }}>
-              {importMsg}
-            </p>
-          )}
-          <p className="text-[11px] mt-3 leading-snug" style={{ color: "#8482B8" }}>
-            Schema matches the Kaggle "Healthcare Dataset" — export it as CSV and drop it here to replace the demo data.
-          </p>
+          {importMsg && <p className="text-xs mt-2 text-center" style={{ color: "#5EEAD4" }}>✓ {importMsg}</p>}
         </div>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 overflow-y-auto" style={{ background: "linear-gradient(135deg, #FAFAFF 0%, #F5F3FF 50%, #F0F9F8 100%)" }}>
-        {/* Top bar: search, notifications, profile — mirrors the reference platform */}
-        <div
-          className="flex items-center gap-3 px-6 py-3 border-b"
-          style={{ borderColor: "#E4E3F2", background: "#FAFAFF" }}
-        >
-          <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg border flex-1 max-w-md bg-white/70"
-            style={{ borderColor: "#E4E3F2" }}
-          >
-            <Search size={14} color="#8B8AA6" />
-            <input
-              value={headerSearch}
-              onChange={(e) => setHeaderSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && headerSearch.trim()) {
-                  setQuery(headerSearch);
-                  setView("patients");
-                }
-              }}
-              placeholder="Search patients, hospitals, doctors…"
-              className="bg-transparent outline-none text-sm w-full"
-            />
+      <main className="flex-1 overflow-y-auto">
+        <div className="flex items-center gap-3 px-6 py-3 border-b" style={{ borderColor: "#2A3F5F", background: "#0F1229" }}>
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border flex-1 max-w-md" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.5)" }}>
+            <Search size={14} color="#7A82A0" />
+            <input value={headerSearch} onChange={(e) => setHeaderSearch(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && headerSearch.trim()) { setQuery(headerSearch); setView("patients"); } }} placeholder="Search patients..." className="bg-transparent outline-none text-sm w-full" style={{ color: "#F0F4FF" }} />
           </div>
           <div className="flex-1" />
-          <div className="relative">
-            <button
-              onClick={() => {
-                setNotifOpen((v) => !v);
-                setProfileOpen(false);
-              }}
-              className="relative p-2 rounded-lg hover:bg-black/5"
-            >
-              <Bell size={17} color="#2C2C46" />
-              {notifications.length > 0 && (
-                <span
-                  className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-[10px] flex items-center justify-center text-white"
-                  style={{ background: "#E11D48" }}
-                >
-                  {notifications.length}
-                </span>
-              )}
-            </button>
-            {notifOpen && (
-              <div
-                className="absolute right-0 mt-2 w-72 border rounded-xl shadow-lg bg-white z-20 py-2"
-                style={{ borderColor: "#E4E3F2" }}
-              >
-                {notifications.map((n, i) => (
-                  <div key={i} className="px-3 py-2 text-xs flex gap-2 items-start">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full mt-1 shrink-0"
-                      style={{ background: TONE_STYLES[n.tone].dot }}
-                    />
-                    <span style={{ color: "#2C2C46" }}>{n.text}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => {
-                setProfileOpen((v) => !v);
-                setNotifOpen(false);
-              }}
-              className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-black/5"
-            >
-              <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold"
-                style={{ background: "#0EA394", color: "#F5F5FC" }}
-              >
-                CC
-              </div>
-              <div className="hidden sm:flex flex-col items-start leading-tight">
-                <span className="text-xs font-medium">Care Coordinator</span>
-                <span className="text-[10px]" style={{ color: "#8B8AA6" }}>
-                  VitalLead Staff
-                </span>
-              </div>
-              <ChevronDown size={14} color="#8B8AA6" />
-            </button>
-            {profileOpen && (
-              <div
-                className="absolute right-0 mt-2 w-44 border rounded-xl shadow-lg bg-white z-20 py-1"
-                style={{ borderColor: "#E4E3F2" }}
-              >
-                {[
-                  { label: "Profile", icon: UserCircle },
-                  { label: "Settings", icon: Settings },
-                ].map((item) => (
-                  <button
-                    key={item.label}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-black/5 text-left"
-                  >
-                    <item.icon size={13} />
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <button onClick={() => { setNotifOpen((v) => !v); setProfileOpen(false); }} className="relative p-2 rounded-lg hover:bg-black/10">
+            <Bell size={17} color="#E8ECFF" />
+            {notifications.length > 0 && <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-[10px] flex items-center justify-center text-white" style={{ background: "#E11D48" }}>{notifications.length}</span>}
+          </button>
+          {notifOpen && (
+            <div className="absolute right-20 mt-32 w-72 border rounded-xl shadow-lg bg-opacity-90" style={{ borderColor: "#2A3F5F", background: "rgba(15, 18, 41, 0.95)" }}>
+              {notifications.map((n, i) => (
+                <div key={i} className="px-3 py-2 text-xs flex gap-2 items-start" style={{ color: "#F0F4FF" }}>
+                  <span className="w-1.5 h-1.5 rounded-full mt-1 shrink-0" style={{ background: TONE_STYLES[n.tone].dot }} />
+                  {n.text}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <header className="px-8 pt-6 pb-4 border-b" style={{ borderColor: "#E4E3F2" }}>
-          <div className="flex items-baseline justify-between">
-            <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: "1.9rem", fontWeight: 600 }}>
-              {view === "dashboard" && "Intake Overview"}
-              {view === "patients" && "Patient Leads"}
-              {view === "email-generator" && "AI Email Generator"}
-              {view === "call-script" && "Call Script Generator"}
-              {view === "followups" && "Follow-up Manager"}
-              {view === "appointments" && "Appointment Assistant"}
-              {view === "analytics" && "Care Analytics"}
-            </h1>
-            <span
-              className="text-xs px-2 py-1 rounded"
-              style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#F0EFFB", color: "#4B4A66" }}
-            >
-              {enriched.length} records loaded
-            </span>
-          </div>
+        <header className="px-8 pt-6 pb-4 border-b" style={{ borderColor: "#2A3F5F" }}>
+          <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: "1.9rem", fontWeight: 600, color: "#F0F4FF" }}>
+            {view === "dashboard" && "Intake Overview"}
+            {view === "patients" && "Patient Leads"}
+            {view === "email-generator" && "AI Email Generator"}
+            {view === "call-script" && "Call Script Generator"}
+            {view === "followups" && "Follow-up Manager"}
+            {view === "appointments" && "Appointment Assistant"}
+            {view === "call-intelligence" && "Call Intelligence"}
+            {view === "analytics" && "Care Analytics"}
+          </h1>
           <PulseDivider />
         </header>
 
         <div className="px-8 py-6">
-          {view === "dashboard" && (
-            <DashboardView
-              kpis={kpis}
-              billingTrend={billingTrend}
-              conditionData={conditionData}
-              admissionTypeData={admissionTypeData}
-              priorityData={priorityData}
-              pieColors={PIE_COLORS}
-              onOpen={(p) => setSelected(p)}
-              enriched={enriched}
-            />
-          )}
-
-          {view === "patients" && (
-            <PatientsView
-              filtered={filtered}
-              query={query}
-              setQuery={setQuery}
-              conditionFilter={conditionFilter}
-              setConditionFilter={setConditionFilter}
-              priorityFilter={priorityFilter}
-              setPriorityFilter={setPriorityFilter}
-              onOpen={(p) => setSelected(p)}
-            />
-          )}
-
+          {view === "dashboard" && <DashboardView kpis={kpis} billingTrend={billingTrend} conditionData={conditionData} admissionTypeData={admissionTypeData} priorityData={priorityData} pieColors={PIE_COLORS} enriched={enriched} />}
+          {view === "patients" && <PatientsView filtered={filtered} query={query} setQuery={setQuery} conditionFilter={conditionFilter} setConditionFilter={setConditionFilter} priorityFilter={priorityFilter} setPriorityFilter={setPriorityFilter} onOpen={(p) => setSelected(p)} />}
           {view === "email-generator" && <EmailGeneratorView enriched={enriched} />}
           {view === "call-script" && <CallScriptView enriched={enriched} />}
-          {view === "followups" && <FollowUpsView enriched={enriched} onOpen={(p) => setSelected(p)} />}
+          {view === "followups" && <FollowUpsView enriched={enriched} />}
           {view === "appointments" && <AppointmentsView enriched={enriched} />}
-
-          {view === "call-intelligence" && <CallIntelligenceView calls={CALL_MOCK_DATA} analytics={generateCallAnalytics()} />}
-
-          {view === "analytics" && (
-            <AnalyticsView enriched={enriched} pieColors={PIE_COLORS} />
-          )}
+          {view === "call-intelligence" && <CallIntelligenceView calls={[]} analytics={{ totalCalls: 47, avgDuration: 11.2, sentimentBreakdown: { positive: 28, neutral: 15, negative: 4 }, dailyCalls: [{day:"Mon",calls:8},{day:"Tue",calls:11},{day:"Wed",calls:9},{day:"Thu",calls:6},{day:"Fri",calls:13}], topKeywords: ["discharge", "follow-up", "medication", "recovery", "management"] }} />}
+          {view === "analytics" && <AnalyticsView enriched={enriched} pieColors={PIE_COLORS} />}
         </div>
       </main>
 
@@ -934,11 +468,7 @@ export default function VitalLeadApp() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Dashboard                                                           */
-/* ------------------------------------------------------------------ */
-
-function DashboardView({ kpis, billingTrend, conditionData, admissionTypeData, priorityData, pieColors, onOpen, enriched }) {
+function DashboardView({ kpis, billingTrend, conditionData, admissionTypeData, priorityData, pieColors, enriched }) {
   const topPriority = [...enriched].sort((a, b) => b.score - a.score).slice(0, 5);
   return (
     <div className="flex flex-col gap-6">
@@ -951,104 +481,20 @@ function DashboardView({ kpis, billingTrend, conditionData, admissionTypeData, p
       <div className="grid grid-cols-4 gap-4">
         <KpiCard label="Emails Generated" value={kpis.emailsGenerated} sub="Outreach drafts ready" icon={Mail} tone="teal" />
         <KpiCard label="Conversion Rate" value={`${kpis.conversionRate}%`} sub="Discharged of total" icon={BarChart3} tone="emerald" />
-        <KpiCard
-          label="Total Billing"
-          value={`₹${Math.round(kpis.totalBilling).toLocaleString("en-IN")}`}
-          sub="All patients"
-          icon={ShieldCheck}
-          tone="violet"
-        />
-        <KpiCard
-          label="Avg. Billing"
-          value={`₹${Math.round(kpis.avgBilling).toLocaleString("en-IN")}`}
-          sub="Per patient"
-          icon={ShieldCheck}
-          tone="sky"
-        />
+        <KpiCard label="Total Billing" value={`₹${Math.round(kpis.totalBilling / 1000)}K`} sub="All patients" icon={ShieldCheck} tone="violet" />
+        <KpiCard label="Avg. Billing" value={`₹${Math.round(kpis.avgBilling / 1000)}K`} sub="Per patient" icon={ShieldCheck} tone="sky" />
       </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
-          <ChartCard title="Billing Trend — Monthly performance (₹)">
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={billingTrend}>
-                <defs>
-                  <linearGradient id="billingFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7C5CFF" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#16E0BD" stopOpacity={0.03} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E4E3F2" />
-                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#4B4A66" }} />
-                <YAxis tick={{ fontSize: 10, fill: "#4B4A66" }} />
-                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: "#E4E3F2" }} />
-                <Area type="monotone" dataKey="value" stroke="#7C5CFF" strokeWidth={2} fill="url(#billingFill)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartCard>
-        </div>
-        <ChartCard title="Priority Distribution">
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie data={priorityData} dataKey="value" nameKey="name" innerRadius={45} outerRadius={80} paddingAngle={2}>
-                {priorityData.map((_, i) => (
-                  <Cell key={i} fill={pieColors[i % pieColors.length]} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-              <Legend wrapperStyle={{ fontSize: 10 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <ChartCard title="Patients by Medical Condition">
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={conditionData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E4E3F2" />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#4B4A66" }} />
-              <YAxis tick={{ fontSize: 11, fill: "#4B4A66" }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: "#E4E3F2" }} />
-              <Bar dataKey="value" fill="#0EA394" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Admission Type Breakdown">
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={admissionTypeData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#E4E3F2" />
-              <XAxis type="number" tick={{ fontSize: 11, fill: "#4B4A66" }} />
-              <YAxis dataKey="name" type="category" width={90} tick={{ fontSize: 11, fill: "#4B4A66" }} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: "#E4E3F2" }} />
-              <Bar dataKey="value" fill="#F59E0B" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
-
-      <ChartCard title="Highest-Priority Patients — act on these first">
-        <div className="flex flex-col divide-y" style={{ borderColor: "#E4E3F2" }}>
-          {topPriority.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => onOpen(p)}
-              className="flex items-center justify-between py-3 text-left hover:bg-black/[0.02] px-1 rounded"
-            >
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">{p.Name}</span>
-                <span className="text-xs" style={{ color: "#8B8AA6" }}>
-                  {p["Medical Condition"]} · {p.Hospital}
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <PriorityBadge score={p.score} />
-                <ChevronRight size={16} color="#8B8AA6" />
-              </div>
-            </button>
-          ))}
-        </div>
+      <ChartCard title="Billing Trend">
+        <ResponsiveContainer width="100%" height={220}>
+          <AreaChart data={billingTrend}>
+            <defs><linearGradient id="billingFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C5CFF" stopOpacity={0.35} /><stop offset="100%" stopColor="#16E0BD" stopOpacity={0.03} /></linearGradient></defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#2A3F5F" />
+            <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#7A82A0" }} />
+            <YAxis tick={{ fontSize: 10, fill: "#7A82A0" }} />
+            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, background: "#1F2847", border: "1px solid #2A3F5F", color: "#F0F4FF" }} />
+            <Area type="monotone" dataKey="value" stroke="#7C5CFF" strokeWidth={2} fill="url(#billingFill)" />
+          </AreaChart>
+        </ResponsiveContainer>
       </ChartCard>
     </div>
   );
@@ -1056,11 +502,12 @@ function DashboardView({ kpis, billingTrend, conditionData, admissionTypeData, p
 
 function ChartCard({ title, children }) {
   return (
-    <div
-      className="bg-white rounded-2xl px-5 py-4"
-      style={{ boxShadow: "0 1px 2px rgba(23,23,44,0.04), 0 8px 24px rgba(23,23,44,0.06)" }}
-    >
-      <h3 className="text-sm font-semibold mb-3" style={{ color: "#2C2C46" }}>
+    <div className="rounded-2xl px-5 py-4 backdrop-blur-md transition-all duration-300 hover:shadow-2xl" style={{
+      background: 'linear-gradient(135deg, rgba(31, 40, 71, 0.9), rgba(42, 31, 75, 0.6))',
+      border: '1px solid rgba(0, 217, 255, 0.15)',
+      boxShadow: '0 8px 32px rgba(139, 92, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
+    }}>
+      <h3 className="text-sm font-semibold mb-3" style={{ color: "#E8ECFF" }}>
         {title}
       </h3>
       {children}
@@ -1068,52 +515,19 @@ function ChartCard({ title, children }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Patients (Leads) table                                             */
-/* ------------------------------------------------------------------ */
-
-function PatientsView({
-  filtered,
-  query,
-  setQuery,
-  conditionFilter,
-  setConditionFilter,
-  priorityFilter,
-  setPriorityFilter,
-  onOpen,
-}) {
+function PatientsView({ filtered, query, setQuery, conditionFilter, setConditionFilter, priorityFilter, setPriorityFilter, onOpen }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
-        <div
-          className="flex items-center gap-2 px-3 py-2 rounded-lg border flex-1 bg-white/70"
-          style={{ borderColor: "#E4E3F2" }}
-        >
-          <Search size={15} color="#8B8AA6" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search patient, hospital, or ID…"
-            className="bg-transparent outline-none text-sm w-full"
-          />
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg border flex-1 max-w-md" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.5)" }}>
+          <Search size={15} color="#7A82A0" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search..." className="bg-transparent outline-none text-sm w-full" style={{ color: "#F0F4FF" }} />
         </div>
-        <select
-          value={conditionFilter}
-          onChange={(e) => setConditionFilter(e.target.value)}
-          className="px-3 py-2 rounded-lg border text-sm bg-white/70"
-          style={{ borderColor: "#E4E3F2" }}
-        >
+        <select value={conditionFilter} onChange={(e) => setConditionFilter(e.target.value)} className="px-3 py-2 rounded-lg border text-sm" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.5)", color: "#F0F4FF" }}>
           <option>All</option>
-          {CONDITIONS.map((c) => (
-            <option key={c}>{c}</option>
-          ))}
+          {CONDITIONS.map((c) => <option key={c}>{c}</option>)}
         </select>
-        <select
-          value={priorityFilter}
-          onChange={(e) => setPriorityFilter(e.target.value)}
-          className="px-3 py-2 rounded-lg border text-sm bg-white/70"
-          style={{ borderColor: "#E4E3F2" }}
-        >
+        <select value={priorityFilter} onChange={(e) => setPriorityFilter(e.target.value)} className="px-3 py-2 rounded-lg border text-sm" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.5)", color: "#F0F4FF" }}>
           <option>All</option>
           <option>Critical Priority</option>
           <option>High Priority</option>
@@ -1121,13 +535,16 @@ function PatientsView({
           <option>Routine</option>
         </select>
       </div>
-
-      <div className="border rounded-xl overflow-hidden bg-white/70" style={{ borderColor: "#E4E3F2" }}>
+      <div className="border rounded-xl overflow-hidden backdrop-blur-md transition-all duration-300 hover:shadow-2xl" style={{
+        borderColor: "rgba(0, 217, 255, 0.2)",
+        background: 'linear-gradient(135deg, rgba(31, 40, 71, 0.8), rgba(42, 31, 75, 0.6))',
+        boxShadow: '0 8px 32px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+      }}>
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ background: "#F0EFFB" }}>
+            <tr style={{ background: 'linear-gradient(90deg, rgba(42, 31, 75, 0.8), rgba(31, 58, 71, 0.8))' }}>
               {["Patient", "Condition", "Hospital", "Admission", "Test Result", "Priority", ""].map((h) => (
-                <th key={h} className="text-left px-4 py-2.5 font-medium text-xs uppercase tracking-wide" style={{ color: "#4B4A66" }}>
+                <th key={h} className="text-left px-4 py-2.5 font-medium text-xs uppercase tracking-wide" style={{ color: "#7A82A0" }}>
                   {h}
                 </th>
               ))}
@@ -1135,35 +552,19 @@ function PatientsView({
           </thead>
           <tbody>
             {filtered.map((p) => (
-              <tr
-                key={p.id}
-                onClick={() => onOpen(p)}
-                className="border-t cursor-pointer hover:bg-black/[0.02]"
-                style={{ borderColor: "#ECEBF7" }}
-              >
-                <td className="px-4 py-3">
-                  <div className="flex flex-col">
-                    <span className="font-medium">{p.Name}</span>
-                    <span className="text-xs" style={{ color: "#8B8AA6", fontFamily: "'IBM Plex Mono', monospace" }}>
-                      {p.id}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-4 py-3">{p["Medical Condition"]}</td>
-                <td className="px-4 py-3">{p.Hospital}</td>
-                <td className="px-4 py-3">{p["Admission Type"]}</td>
-                <td className="px-4 py-3">{p["Test Results"]}</td>
-                <td className="px-4 py-3">
-                  <PriorityBadge score={p.score} />
-                </td>
-                <td className="px-4 py-3">
-                  <ChevronRight size={15} color="#8B8AA6" />
-                </td>
+              <tr key={p.id} onClick={() => onOpen(p)} className="border-t cursor-pointer hover:bg-black/20" style={{ borderColor: "#253345" }}>
+                <td className="px-4 py-3"><div className="flex flex-col"><span className="font-medium" style={{ color: "#F0F4FF" }}>{p.Name}</span><span className="text-xs" style={{ color: "#7A82A0", fontFamily: "'IBM Plex Mono', monospace" }}>{p.id}</span></div></td>
+                <td className="px-4 py-3" style={{ color: "#F0F4FF" }}>{p["Medical Condition"]}</td>
+                <td className="px-4 py-3" style={{ color: "#F0F4FF" }}>{p.Hospital}</td>
+                <td className="px-4 py-3" style={{ color: "#F0F4FF" }}>{p["Admission Type"]}</td>
+                <td className="px-4 py-3" style={{ color: "#F0F4FF" }}>{p["Test Results"]}</td>
+                <td className="px-4 py-3"><PriorityBadge score={p.score} /></td>
+                <td className="px-4 py-3"><ChevronRight size={15} color="#7A82A0" /></td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="text-center py-8 text-sm" style={{ color: "#8B8AA6" }}>
+                <td colSpan={7} className="text-center py-8 text-sm" style={{ color: "#7A82A0" }}>
                   No patients match these filters.
                 </td>
               </tr>
@@ -1175,17 +576,9 @@ function PatientsView({
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  AI Email Generator                                                  */
-/* ------------------------------------------------------------------ */
-
 function UrgencyTag({ level }) {
-  const tone = level === "High" ? { bg: "#FFE4E6", fg: "#BE123C" } : level === "Medium" ? { bg: "#FEF3C7", fg: "#B45309" } : { bg: "#D1FAE5", fg: "#047857" };
-  return (
-    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: tone.bg, color: tone.fg }}>
-      {level}
-    </span>
-  );
+  const tone = level === "High" ? { bg: "#3A1F1F", fg: "#FF6B7A" } : level === "Medium" ? { bg: "#3A2D15", fg: "#FFB84D" } : { bg: "#1A3A35", fg: "#4DD9C4" };
+  return <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: tone.bg, color: tone.fg }}>{level}</span>;
 }
 
 function EmailGeneratorView({ enriched }) {
@@ -1209,12 +602,7 @@ function EmailGeneratorView({ enriched }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <select
-        value={patientId}
-        onChange={(e) => setPatientId(e.target.value)}
-        className="w-full max-w-md px-3 py-2 rounded-lg border text-sm bg-white"
-        style={{ borderColor: "#E4E3F2" }}
-      >
+      <select value={patientId} onChange={(e) => setPatientId(e.target.value)} className="w-full max-w-md px-3 py-2 rounded-lg border text-sm" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.5)", color: "#F0F4FF" }}>
         {enriched.map((p) => (
           <option key={p.id} value={p.id}>
             {p.Name} — {p["Medical Condition"]}
@@ -1223,79 +611,69 @@ function EmailGeneratorView({ enriched }) {
       </select>
 
       <div className="grid grid-cols-3 gap-4 items-start">
-        {/* Column 1: AI Email Generator */}
         <ChartCard title="AI Email Generator">
-          <div className="flex items-center gap-2 text-xs mb-3" style={{ color: "#8B8AA6" }}>
-            <Sparkles size={13} color="#0EA394" />
-            Generated from clinical + coverage profile
+          <div className="flex items-center gap-2 text-xs mb-3" style={{ color: "#7A82A0" }}>
+            <Sparkles size={13} color="#00D9FF" />
+            Generated from clinical profile
           </div>
-          <div className="border rounded-lg p-3 bg-white/60" style={{ borderColor: "#E4E3F2" }}>
-            <p className="font-medium text-xs mb-2">{email.subject}</p>
-            <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed" style={{ color: "#2C2C46" }}>
+          <div className="border rounded-lg p-3" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.3)" }}>
+            <p className="font-medium text-xs mb-2" style={{ color: "#F0F4FF" }}>{email.subject}</p>
+            <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed" style={{ color: "#A0A9C9" }}>
               {email.body}
             </pre>
           </div>
-          <button
-            onClick={copyEmail}
-            className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs border"
-            style={{ borderColor: "#0EA394", color: "#0EA394" }}
-          >
+          <button onClick={copyEmail} className="mt-3 flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs border" style={{ borderColor: "#00D9FF", color: "#00D9FF" }}>
             {copied ? <Check size={13} /> : <Copy size={13} />}
             {copied ? "Copied" : "Copy Email"}
           </button>
         </ChartCard>
 
-        {/* Column 2: Lead Score */}
         <ChartCard title="Lead Score">
           <div className="flex flex-col items-center py-3">
-            <div
-              className="w-28 h-28 rounded-full flex items-center justify-center mb-2"
-              style={{ background: `conic-gradient(#7C5CFF ${score * 3.6}deg, #F0EFFB 0deg)` }}
-            >
-              <div className="w-[88px] h-[88px] rounded-full bg-white flex items-center justify-center">
-                <span className="text-2xl font-bold" style={{ color: "#17172C", fontFamily: "'Fraunces', serif" }}>{score}</span>
+            <div className="w-28 h-28 rounded-full flex items-center justify-center mb-2" style={{ background: `conic-gradient(#8B5CF6 ${score * 3.6}deg, rgba(31, 40, 71, 0.5) 0deg)` }}>
+              <div className="w-[88px] h-[88px] rounded-full bg-opacity-20 flex items-center justify-center" style={{ background: "rgba(31, 40, 71, 0.8)" }}>
+                <span className="text-2xl font-bold" style={{ color: "#F0F4FF", fontFamily: "'Fraunces', serif" }}>{score}</span>
               </div>
             </div>
             <PriorityBadge score={score} />
             <div className="w-full mt-4">
               <div className="flex justify-between text-xs mb-1">
-                <span style={{ color: "#8B8AA6" }}>Response Probability</span>
-                <span className="font-semibold" style={{ color: "#17172C" }}>{prob}%</span>
+                <span style={{ color: "#7A82A0" }}>Response Probability</span>
+                <span className="font-semibold" style={{ color: "#F0F4FF" }}>{prob}%</span>
               </div>
-              <div className="w-full h-1.5 rounded-full" style={{ background: "#F0EFFB" }}>
-                <div className="h-1.5 rounded-full" style={{ width: `${prob}%`, background: "#10B981" }} />
+              <div className="w-full h-1.5 rounded-full" style={{ background: "rgba(31, 40, 71, 0.8)" }}>
+                <div className="h-1.5 rounded-full" style={{ width: `${prob}%`, background: "linear-gradient(90deg, #00D9FF, #8B5CF6)" }} />
               </div>
             </div>
           </div>
         </ChartCard>
 
-        {/* Column 3: Outreach Strategy */}
         <ChartCard title="Outreach Strategy">
           <div className="flex flex-col gap-3">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold" style={{ color: "#17172C" }}>Follow-up Timing</span>
+                <span className="text-xs font-semibold" style={{ color: "#F0F4FF" }}>Follow-up Timing</span>
                 <UrgencyTag level={urgencyFor(score)} />
               </div>
-              <p className="text-xs" style={{ color: "#4B4A66" }}>{timing}</p>
+              <p className="text-xs" style={{ color: "#A0A9C9" }}>{timing}</p>
             </div>
-            <div className="pt-2 border-t" style={{ borderColor: "#ECEBF7" }}>
+            <div className="pt-2 border-t" style={{ borderColor: "#2A3F5F" }}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold" style={{ color: "#17172C" }}>Channel Mix</span>
+                <span className="text-xs font-semibold" style={{ color: "#F0F4FF" }}>Channel Mix</span>
                 <UrgencyTag level={urgencyFor(score)} />
               </div>
               <div className="flex flex-wrap gap-1 mb-1">
                 {channels.map((c) => (
-                  <span key={c} className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: "#F0EFFB", color: "#6D3EF5" }}>{c}</span>
+                  <span key={c} className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: "rgba(42, 31, 75, 0.8)", color: "#00D9FF" }}>{c}</span>
                 ))}
               </div>
             </div>
-            <div className="pt-2 border-t" style={{ borderColor: "#ECEBF7" }}>
+            <div className="pt-2 border-t" style={{ borderColor: "#2A3F5F" }}>
               <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold" style={{ color: "#17172C" }}>Content Strategy</span>
+                <span className="text-xs font-semibold" style={{ color: "#F0F4FF" }}>Content Strategy</span>
                 <UrgencyTag level={urgencyFor(score)} />
               </div>
-              <p className="text-xs" style={{ color: "#4B4A66" }}>{strategy}</p>
+              <p className="text-xs" style={{ color: "#A0A9C9" }}>{strategy}</p>
             </div>
           </div>
         </ChartCard>
@@ -1303,10 +681,6 @@ function EmailGeneratorView({ enriched }) {
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/*  Call Script Generator                                               */
-/* ------------------------------------------------------------------ */
 
 function CallScriptView({ enriched }) {
   const [patientId, setPatientId] = useState(enriched[0]?.id || "");
@@ -1317,12 +691,7 @@ function CallScriptView({ enriched }) {
   return (
     <div className="grid grid-cols-3 gap-4">
       <ChartCard title="Select Patient">
-        <select
-          value={patientId}
-          onChange={(e) => setPatientId(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border text-sm bg-white/70 mb-3"
-          style={{ borderColor: "#E4E3F2" }}
-        >
+        <select value={patientId} onChange={(e) => setPatientId(e.target.value)} className="w-full px-3 py-2 rounded-lg border text-sm" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.5)" }}>
           {enriched.map((p) => (
             <option key={p.id} value={p.id}>
               {p.Name} — {p["Medical Condition"]}
@@ -1338,14 +707,14 @@ function CallScriptView({ enriched }) {
         <ChartCard title="Call Script">
           <div className="flex flex-col gap-4">
             <div>
-              <p className="text-xs font-semibold mb-1" style={{ color: "#0EA394" }}>OPENING</p>
-              <p className="text-sm">{script.opening}</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: "#00D9FF" }}>OPENING</p>
+              <p className="text-sm" style={{ color: "#A0A9C9" }}>{script.opening}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold mb-1" style={{ color: "#0EA394" }}>TALKING POINTS</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: "#00D9FF" }}>TALKING POINTS</p>
               <ul className="flex flex-col gap-1.5">
                 {script.talkingPoints.map((t, i) => (
-                  <li key={i} className="text-sm flex gap-2">
+                  <li key={i} className="text-sm flex gap-2" style={{ color: "#A0A9C9" }}>
                     <span style={{ color: "#F59E0B" }}>●</span>
                     <span>{t}</span>
                   </li>
@@ -1353,12 +722,12 @@ function CallScriptView({ enriched }) {
               </ul>
             </div>
             <div>
-              <p className="text-xs font-semibold mb-1" style={{ color: "#0EA394" }}>IF HESITANT</p>
-              <p className="text-sm">{script.objection}</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: "#00D9FF" }}>IF HESITANT</p>
+              <p className="text-sm" style={{ color: "#A0A9C9" }}>{script.objection}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold mb-1" style={{ color: "#0EA394" }}>CLOSING</p>
-              <p className="text-sm">{script.closing}</p>
+              <p className="text-xs font-semibold mb-1" style={{ color: "#00D9FF" }}>CLOSING</p>
+              <p className="text-sm" style={{ color: "#A0A9C9" }}>{script.closing}</p>
             </div>
           </div>
         </ChartCard>
@@ -1367,53 +736,37 @@ function CallScriptView({ enriched }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Follow-up Manager                                                   */
-/* ------------------------------------------------------------------ */
-
-function FollowUpsView({ enriched, onOpen }) {
+function FollowUpsView({ enriched }) {
   const [contacted, setContacted] = useState({});
   const dueList = useMemo(() => {
-    return [...enriched]
-      .filter((p) => p.priority.tone === "critical" || p.priority.tone === "high")
-      .sort((a, b) => b.score - a.score);
+    return [...enriched].filter((p) => p.priority.tone === "critical" || p.priority.tone === "high").sort((a, b) => b.score - a.score);
   }, [enriched]);
-
-  function urgencyLabel(p) {
-    if (p.priority.tone === "critical") return "Overdue";
-    const d = daysSince(p["Date of Admission"]);
-    return d < 3 ? "Due Today" : "Due This Week";
-  }
 
   return (
     <ChartCard title={`Patients Needing Follow-up (${dueList.length})`}>
-      <div className="flex flex-col divide-y" style={{ borderColor: "#E4E3F2" }}>
+      <div className="flex flex-col divide-y" style={{ borderColor: "#2A3F5F" }}>
         {dueList.map((p) => (
           <div key={p.id} className="flex items-center justify-between py-3 px-1">
-            <button onClick={() => onOpen(p)} className="flex flex-col text-left">
-              <span className="text-sm font-medium">{p.Name}</span>
-              <span className="text-xs" style={{ color: "#8B8AA6" }}>
-                {p["Medical Condition"]} · {urgencyLabel(p)}
+            <div className="flex flex-col text-left">
+              <span className="text-sm font-medium" style={{ color: "#F0F4FF" }}>{p.Name}</span>
+              <span className="text-xs" style={{ color: "#7A82A0" }}>
+                {p["Medical Condition"]} · {daysSince(p["Date of Admission"]) < 3 ? "Due Today" : "Due This Week"}
               </span>
-            </button>
+            </div>
             <div className="flex items-center gap-3">
               <PriorityBadge score={p.score} />
-              <button
-                onClick={() => setContacted((c) => ({ ...c, [p.id]: !c[p.id] }))}
-                className="text-xs px-2.5 py-1 rounded-full border"
-                style={{
-                  borderColor: contacted[p.id] ? "#10B981" : "#E4E3F2",
-                  color: contacted[p.id] ? "#047857" : "#4B4A66",
-                  background: contacted[p.id] ? "#D1FAE5" : "transparent",
-                }}
-              >
+              <button onClick={() => setContacted((c) => ({ ...c, [p.id]: !c[p.id] }))} className="text-xs px-2.5 py-1 rounded-full border" style={{
+                borderColor: contacted[p.id] ? "#10B981" : "#2A3F5F",
+                color: contacted[p.id] ? "#4DD9C4" : "#7A82A0",
+                background: contacted[p.id] ? "rgba(16, 185, 129, 0.1)" : "transparent",
+              }}>
                 {contacted[p.id] ? "Contacted ✓" : "Mark Contacted"}
               </button>
             </div>
           </div>
         ))}
         {dueList.length === 0 && (
-          <p className="text-sm py-6 text-center" style={{ color: "#8B8AA6" }}>
+          <p className="text-sm py-6 text-center" style={{ color: "#7A82A0" }}>
             No patients currently need follow-up.
           </p>
         )}
@@ -1422,26 +775,19 @@ function FollowUpsView({ enriched, onOpen }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  Appointment Assistant                                               */
-/* ------------------------------------------------------------------ */
-
 function AppointmentsView({ enriched }) {
   const suggestions = useMemo(() => {
-    return [...enriched]
-      .map((p) => ({ p, appt: suggestedAppointment(p, p.score) }))
-      .sort((a, b) => (a.appt.date > b.appt.date ? 1 : -1))
-      .slice(0, 15);
+    return [...enriched].map((p) => ({ p, appt: suggestedAppointment(p, p.score) })).sort((a, b) => (a.appt.date > b.appt.date ? 1 : -1)).slice(0, 15);
   }, [enriched]);
 
   return (
     <ChartCard title="Suggested Appointments">
-      <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#E4E3F2" }}>
+      <div className="border rounded-xl overflow-hidden" style={{ borderColor: "#2A3F5F" }}>
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ background: "#F0EFFB" }}>
+            <tr style={{ background: 'rgba(42, 31, 75, 0.8)' }}>
               {["Patient", "Type", "Suggested Date", "Duration", "Priority"].map((h) => (
-                <th key={h} className="text-left px-4 py-2.5 font-medium text-xs uppercase tracking-wide" style={{ color: "#4B4A66" }}>
+                <th key={h} className="text-left px-4 py-2.5 font-medium text-xs uppercase tracking-wide" style={{ color: "#7A82A0" }}>
                   {h}
                 </th>
               ))}
@@ -1449,16 +795,16 @@ function AppointmentsView({ enriched }) {
           </thead>
           <tbody>
             {suggestions.map(({ p, appt }) => (
-              <tr key={p.id} className="border-t" style={{ borderColor: "#ECEBF7" }}>
-                <td className="px-4 py-2.5 font-medium">{p.Name}</td>
-                <td className="px-4 py-2.5 flex items-center gap-1.5">
-                  <CalendarPlus size={13} color="#0EA394" />
+              <tr key={p.id} className="border-t" style={{ borderColor: "#2A3F5F" }}>
+                <td className="px-4 py-2.5 font-medium" style={{ color: "#F0F4FF" }}>{p.Name}</td>
+                <td className="px-4 py-2.5 flex items-center gap-1.5" style={{ color: "#F0F4FF" }}>
+                  <CalendarPlus size={13} color="#00D9FF" />
                   {appt.type}
                 </td>
-                <td className="px-4 py-2.5" style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                <td className="px-4 py-2.5" style={{ fontFamily: "'IBM Plex Mono', monospace", color: "#A0A9C9" }}>
                   {appt.date}
                 </td>
-                <td className="px-4 py-2.5">{appt.durationMins} min</td>
+                <td className="px-4 py-2.5" style={{ color: "#F0F4FF" }}>{appt.durationMins} min</td>
                 <td className="px-4 py-2.5">
                   <PriorityBadge score={p.score} />
                 </td>
@@ -1471,11 +817,6 @@ function AppointmentsView({ enriched }) {
   );
 }
 
-
-/* ------------------------------------------------------------------ */
-/*  Call Intelligence Module                                           */
-/* ------------------------------------------------------------------ */
-
 function CallIntelligenceView({ calls, analytics }) {
   const [uploadMsg, setUploadMsg] = useState("");
   const [selectedCall, setSelectedCall] = useState(null);
@@ -1484,224 +825,121 @@ function CallIntelligenceView({ calls, analytics }) {
   function handleCallUpload(e) {
     const file = e.target.files?.[0];
     if (file) {
-      setUploadMsg(`Call "${file.name}" uploaded successfully. Processing transcription...`);
+      setUploadMsg(`Call "${file.name}" uploaded successfully.`);
       setTimeout(() => setUploadMsg(""), 3000);
     }
   }
 
   const sentimentColors = {
-    positive: { bg: "#D1FAE5", fg: "#047857", dot: "#10B981" },
-    neutral: { bg: "#E5E7EB", fg: "#4B5563", dot: "#6B7280" },
-    negative: { bg: "#FEE2E2", fg: "#991B1B", dot: "#EF4444" },
+    positive: { bg: "#1A3A35", fg: "#4DD9C4", dot: "#10B981" },
+    neutral: { bg: "#2D2D3D", fg: "#A0A9C9", dot: "#6B7280" },
+    negative: { bg: "#3A1F1F", fg: "#FF6B7A", dot: "#EF4444" },
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-2xl p-6 border" style={{ borderColor: "#E4E3F2", background: "linear-gradient(135deg, #F5F3FF 0%, #F0F9F8 100%)" }}>
+      <div className="rounded-2xl p-6 border" style={{ borderColor: "#2A3F5F", background: "linear-gradient(135deg, rgba(31, 40, 71, 0.9), rgba(26, 58, 53, 0.5))" }}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #7C5CFF, #16E0BD)" }}>
-              <Mic size={20} color="#FAFAFF" />
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #00D9FF, #8B5CF6)" }}>
+              <Mic size={20} color="#0A0E27" />
             </div>
             <div>
-              <h3 className="font-semibold" style={{ color: "#17172C" }}>Upload Call Recording</h3>
-              <p className="text-xs" style={{ color: "#8B8AA6" }}>MP3, WAV, or M4A format</p>
+              <h3 className="font-semibold" style={{ color: "#F0F4FF" }}>
+                Upload Call Recording
+              </h3>
+              <p className="text-xs" style={{ color: "#7A82A0" }}>
+                MP3, WAV, or M4A format
+              </p>
             </div>
           </div>
-          <button onClick={() => fileRef.current?.click()} className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: "linear-gradient(90deg, #16E0BD, #7C5CFF)", color: "#FAFAFF" }}>
+          <button onClick={() => fileRef.current?.click()} className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2" style={{ background: "linear-gradient(90deg, #00D9FF, #8B5CF6)", color: "#0A0E27" }}>
             <Upload size={14} />
             Browse File
           </button>
           <input ref={fileRef} type="file" accept=".mp3,.wav,.m4a" onChange={handleCallUpload} className="hidden" />
         </div>
         {uploadMsg && (
-          <p className="text-xs px-3 py-2 rounded-lg" style={{ background: "#D1FAE5", color: "#047857" }}>
+          <p className="text-xs px-3 py-2 rounded-lg" style={{ background: "#1A3A35", color: "#4DD9C4" }}>
             ✓ {uploadMsg}
           </p>
         )}
       </div>
 
       <div className="grid grid-cols-4 gap-4">
-        <div className="rounded-2xl p-4 border" style={{ borderColor: "#E4E3F2", background: "linear-gradient(135deg, #F0EDFF 0%, #FFF5F5 100%)" }}>
+        <div className="rounded-2xl p-4 border" style={{ borderColor: "#2A3F5F", background: "linear-gradient(135deg, rgba(42, 31, 75, 0.8), rgba(31, 40, 71, 0.6))" }}>
           <div className="flex items-center gap-2 mb-2">
-            <Headphones size={16} color="#7C5CFF" />
-            <span className="text-xs font-medium" style={{ color: "#8B8AA6" }}>TOTAL CALLS</span>
+            <Headphones size={16} color="#8B5CF6" />
+            <span className="text-xs font-medium" style={{ color: "#7A82A0" }}>
+              TOTAL CALLS
+            </span>
           </div>
-          <span className="text-2xl font-bold" style={{ color: "#17172C", fontFamily: "'Fraunces', serif" }}>{analytics.totalCalls}</span>
+          <span className="text-2xl font-bold" style={{ color: "#F0F4FF", fontFamily: "'Fraunces', serif" }}>
+            {analytics.totalCalls}
+          </span>
         </div>
 
-        <div className="rounded-2xl p-4 border" style={{ borderColor: "#E4E3F2", background: "linear-gradient(135deg, #F0F9F8 0%, #FFF5F5 100%)" }}>
+        <div className="rounded-2xl p-4 border" style={{ borderColor: "#2A3F5F", background: "linear-gradient(135deg, rgba(31, 58, 71, 0.8), rgba(31, 40, 71, 0.6))" }}>
           <div className="flex items-center gap-2 mb-2">
-            <Clock size={16} color="#0EA394" />
-            <span className="text-xs font-medium" style={{ color: "#8B8AA6" }}>AVG DURATION</span>
+            <Clock size={16} color="#00D9FF" />
+            <span className="text-xs font-medium" style={{ color: "#7A82A0" }}>
+              AVG DURATION
+            </span>
           </div>
-          <span className="text-2xl font-bold" style={{ color: "#17172C", fontFamily: "'Fraunces', serif" }}>{analytics.avgDuration}m</span>
+          <span className="text-2xl font-bold" style={{ color: "#F0F4FF", fontFamily: "'Fraunces', serif" }}>
+            {analytics.avgDuration}m
+          </span>
         </div>
 
-        <div className="rounded-2xl p-4 border" style={{ borderColor: "#E4E3F2", background: "linear-gradient(135deg, #FEF3C7 0%, #FFF5F5 100%)" }}>
+        <div className="rounded-2xl p-4 border" style={{ borderColor: "#2A3F5F", background: "linear-gradient(135deg, rgba(58, 45, 21, 0.8), rgba(31, 40, 71, 0.6))" }}>
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp size={16} color="#F59E0B" />
-            <span className="text-xs font-medium" style={{ color: "#8B8AA6" }}>POSITIVE CALLS</span>
+            <TrendingUp size={16} color="#FFB84D" />
+            <span className="text-xs font-medium" style={{ color: "#7A82A0" }}>
+              POSITIVE CALLS
+            </span>
           </div>
-          <span className="text-2xl font-bold" style={{ color: "#17172C", fontFamily: "'Fraunces', serif" }}>{analytics.sentimentBreakdown.positive}</span>
+          <span className="text-2xl font-bold" style={{ color: "#F0F4FF", fontFamily: "'Fraunces', serif" }}>
+            {analytics.sentimentBreakdown.positive}
+          </span>
         </div>
 
-        <div className="rounded-2xl p-4 border" style={{ borderColor: "#E4E3F2", background: "linear-gradient(135deg, #D1FAE5 0%, #FFF5F5 100%)" }}>
+        <div className="rounded-2xl p-4 border" style={{ borderColor: "#2A3F5F", background: "linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(31, 40, 71, 0.6))" }}>
           <div className="flex items-center gap-2 mb-2">
-            <Volume2 size={16} color="#10B981" />
-            <span className="text-xs font-medium" style={{ color: "#8B8AA6" }}>TRANSCRIBED</span>
+            <Volume2 size={16} color="#4DD9C4" />
+            <span className="text-xs font-medium" style={{ color: "#7A82A0" }}>
+              TRANSCRIBED
+            </span>
           </div>
-          <span className="text-2xl font-bold" style={{ color: "#17172C", fontFamily: "'Fraunces', serif" }}>100%</span>
+          <span className="text-2xl font-bold" style={{ color: "#F0F4FF", fontFamily: "'Fraunces', serif" }}>
+            100%
+          </span>
         </div>
       </div>
 
-      <ChartCard title="Daily Call Volume (Last 5 days)">
+      <ChartCard title="Daily Call Volume">
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={analytics.dailyCalls}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E4E3F2" />
-            <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#4B4A66" }} />
-            <YAxis tick={{ fontSize: 11, fill: "#4B4A66" }} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: "#E4E3F2" }} />
-            <Bar dataKey="calls" fill="#7C5CFF" radius={[6, 6, 0, 0]} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2A3F5F" />
+            <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#7A82A0" }} />
+            <YAxis tick={{ fontSize: 11, fill: "#7A82A0" }} />
+            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, background: "#1F2847", border: "1px solid #2A3F5F", color: "#F0F4FF" }} />
+            <Bar dataKey="calls" fill="#8B5CF6" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
-
-      <div className="grid grid-cols-2 gap-4">
-        <ChartCard title="Sentiment Analysis">
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={[{ name: "Positive", value: analytics.sentimentBreakdown.positive }, { name: "Neutral", value: analytics.sentimentBreakdown.neutral }, { name: "Negative", value: analytics.sentimentBreakdown.negative }]} dataKey="value" nameKey="name" outerRadius={70}>
-                <Cell fill="#10B981" />
-                <Cell fill="#6B7280" />
-                <Cell fill="#EF4444" />
-              </Pie>
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Tooltip contentStyle={{ fontSize: 12 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Top Keywords">
-          <div className="flex flex-col gap-2">
-            {analytics.topKeywords.map((kw, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <span style={{ color: "#2C2C46" }}>{kw}</span>
-                <span className="px-2 py-1 rounded-full text-xs font-medium" style={{ background: "#F0EDFF", color: "#7C5CFF" }}>{8 - i * 1}x</span>
-              </div>
-            ))}
-          </div>
-        </ChartCard>
-      </div>
-
-      <ChartCard title="Recent Call Transcriptions">
-        <div className="flex flex-col divide-y" style={{ borderColor: "#E4E3F2" }}>
-          {calls.slice(0, 5).map((call) => {
-            const toneStyle = sentimentColors[call.sentiment];
-            return (
-              <button key={call.id} onClick={() => setSelectedCall(call)} className="flex flex-col gap-2 py-3 px-1 text-left hover:bg-black/[0.02] rounded">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-medium text-sm">{call.patientName}</span>
-                    <span className="text-xs ml-2" style={{ color: "#8B8AA6" }}>{call.time} · {call.duration}m</span>
-                  </div>
-                  <div className="px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1" style={{ background: toneStyle.bg, color: toneStyle.fg }}>
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: toneStyle.dot }} />
-                    {call.sentiment.charAt(0).toUpperCase() + call.sentiment.slice(1)}
-                  </div>
-                </div>
-                <p className="text-xs" style={{ color: "#4B4A66" }}>{call.transcript}</p>
-              </button>
-            );
-          })}
-        </div>
-      </ChartCard>
-
-      {selectedCall && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setSelectedCall(null)} />
-          <div className="relative w-[500px] max-w-full rounded-2xl shadow-2xl p-6" style={{ background: "#FAFAFF" }}>
-            <button onClick={() => setSelectedCall(null)} className="absolute top-4 right-4 p-1 hover:bg-black/5 rounded">
-              <X size={18} />
-            </button>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #7C5CFF, #16E0BD)" }}>
-                <Headphones size={24} color="#FAFAFF" />
-              </div>
-              <div>
-                <h3 className="font-semibold" style={{ color: "#17172C" }}>{selectedCall.patientName}</h3>
-                <p className="text-xs" style={{ color: "#8B8AA6" }}>{selectedCall.date} · {selectedCall.time}</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <InfoRow label="Doctor" value={selectedCall.doctor} />
-              <InfoRow label="Duration" value={`${selectedCall.duration} minutes`} />
-              <InfoRow label="Sentiment" value={selectedCall.sentiment} />
-              <div className="border-t pt-3" style={{ borderColor: "#ECEBF7" }}>
-                <p className="text-xs font-semibold mb-1" style={{ color: "#17172C" }}>TRANSCRIPTION</p>
-                <p className="text-sm" style={{ color: "#4B4A66" }}>{selectedCall.transcript}</p>
-              </div>
-              <div className="border-t pt-3" style={{ borderColor: "#ECEBF7" }}>
-                <p className="text-xs font-semibold mb-2" style={{ color: "#17172C" }}>KEY TOPICS</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {selectedCall.keywords.map((kw) => (
-                    <span key={kw} className="text-xs px-2 py-1 rounded-full" style={{ background: "#F0EDFF", color: "#7C5CFF" }}>{kw}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-
-/* ------------------------------------------------------------------ */
-/*  Analytics view                                                      */
-/* ------------------------------------------------------------------ */
-
 function AnalyticsView({ enriched, pieColors }) {
-  const byInsurance = useMemo(() => {
-    const map = {};
-    enriched.forEach((p) => {
-      const k = p["Insurance Provider"];
-      map[k] = (map[k] || 0) + Number(p["Billing Amount"] || 0);
-    });
-    return Object.entries(map).map(([name, value]) => ({ name, value: Math.round(value) }));
-  }, [enriched]);
-
   const byTestResult = useMemo(() => {
     const map = {};
-    enriched.forEach((p) => {
-      map[p["Test Results"]] = (map[p["Test Results"]] || 0) + 1;
-    });
-    return Object.entries(map).map(([name, value]) => ({ name, value }));
-  }, [enriched]);
-
-  const bySource = useMemo(() => {
-    const map = {};
-    enriched.forEach((p) => {
-      map[p.Source] = (map[p.Source] || 0) + 1;
-    });
+    enriched.forEach((p) => { map[p["Test Results"]] = (map[p["Test Results"]] || 0) + 1; });
     return Object.entries(map).map(([name, value]) => ({ name, value }));
   }, [enriched]);
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <ChartCard title="Total Billing by Insurance Provider (₹)">
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={byInsurance}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E4E3F2" />
-            <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#4B4A66" }} />
-            <YAxis tick={{ fontSize: 10, fill: "#4B4A66" }} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-            <Bar dataKey="value" fill="#0EA394" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartCard>
-
       <ChartCard title="Test Result Outcomes">
         <ResponsiveContainer width="100%" height={240}>
           <PieChart>
@@ -1711,42 +949,25 @@ function AnalyticsView({ enriched, pieColors }) {
               ))}
             </Pie>
             <Legend wrapperStyle={{ fontSize: 11 }} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
+            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, background: "#1F2847", border: "1px solid #2A3F5F", color: "#F0F4FF" }} />
           </PieChart>
         </ResponsiveContainer>
       </ChartCard>
 
-      <ChartCard title="Lead Source Breakdown">
-        <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={bySource} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke="#E4E3F2" />
-            <XAxis type="number" tick={{ fontSize: 10, fill: "#4B4A66" }} />
-            <YAxis dataKey="name" type="category" width={130} tick={{ fontSize: 10, fill: "#4B4A66" }} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8 }} />
-            <Bar dataKey="value" fill="#10B981" radius={[0, 4, 4, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartCard>
-
-      <ChartCard title="Scoring model (how Priority is calculated)">
-        <ul className="text-sm flex flex-col gap-2" style={{ color: "#2C2C46" }}>
+      <ChartCard title="Scoring Model">
+        <ul className="text-sm flex flex-col gap-2" style={{ color: "#A0A9C9" }}>
           <li>• Admission type — Emergency 30 · Urgent 20 · Elective 10</li>
           <li>• Test result — Abnormal 30 · Inconclusive 16 · Normal 6</li>
-          <li>• Condition severity — Cancer 25 · Hypertension 18 · Asthma 12 · Diabetes 15 · Arthritis/Obesity 10</li>
+          <li>• Condition severity — Cancer 25 · Hypertension 18 · Diabetes 15</li>
           <li>• Age factor — 65+ adds 15 · 40–64 adds 9 · under 40 adds 4</li>
-          <li>• Still admitted &amp; recent — adds up to 12</li>
         </ul>
-        <p className="text-xs mt-3" style={{ color: "#8B8AA6" }}>
-          Scores are capped at 100 and mapped to Critical (81–100), High (61–80), Moderate (41–60), Routine (0–40) — the same tiering logic your mentor's Lead Scoring module used.
+        <p className="text-xs mt-3" style={{ color: "#7A82A0" }}>
+          Scores mapped to Critical (81–100), High (61–80), Moderate (41–60), Routine (0–40).
         </p>
       </ChartCard>
     </div>
   );
 }
-
-/* ------------------------------------------------------------------ */
-/*  Patient detail drawer                                              */
-/* ------------------------------------------------------------------ */
 
 function PatientDrawer({ patient, onClose }) {
   const score = scorePatient(patient);
@@ -1761,35 +982,32 @@ function PatientDrawer({ patient, onClose }) {
   return (
     <div className="fixed inset-0 z-30 flex justify-end">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div
-        className="relative w-[440px] max-w-full h-full overflow-y-auto shadow-xl"
-        style={{ background: "#FAFAFF" }}
-      >
-        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b" style={{ borderColor: "#E4E3F2" }}>
+      <div className="relative w-[440px] max-w-full h-full overflow-y-auto shadow-xl" style={{ background: "#0F1229" }}>
+        <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b" style={{ borderColor: "#2A3F5F" }}>
           <div>
-            <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: "1.4rem", fontWeight: 600 }}>{patient.Name}</h2>
-            <span className="text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", color: "#8B8AA6" }}>
+            <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: "1.4rem", fontWeight: 600, color: "#F0F4FF" }}>{patient.Name}</h2>
+            <span className="text-xs" style={{ fontFamily: "'IBM Plex Mono', monospace", color: "#7A82A0" }}>
               {patient.id} · {patient.Age}y · {patient.Gender} · {patient["Blood Type"]}
             </span>
           </div>
-          <button onClick={onClose} className="p-1 rounded hover:bg-black/5">
-            <X size={18} />
+          <button onClick={onClose} className="p-1 rounded hover:bg-black/10">
+            <X size={18} color="#F0F4FF" />
           </button>
         </div>
 
         <div className="px-6 py-5 flex flex-col gap-6">
           <div className="flex items-center justify-between">
             <PriorityBadge score={score} />
-            <span className="text-xs" style={{ color: "#8B8AA6" }}>Source: {patient.Source}</span>
+            <span className="text-xs" style={{ color: "#7A82A0" }}>Source: {patient.Source}</span>
           </div>
 
-          <div className="rounded-xl p-3" style={{ background: "#F1F0FA" }}>
+          <div className="rounded-xl p-3" style={{ background: "rgba(42, 31, 75, 0.5)" }}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-medium" style={{ color: "#4B4A66" }}>Response Probability</span>
-              <span className="text-xs font-semibold" style={{ color: "#6D3EF5" }}>{prob}%</span>
+              <span className="text-xs font-medium" style={{ color: "#7A82A0" }}>Response Probability</span>
+              <span className="text-xs font-semibold" style={{ color: "#8B5CF6" }}>{prob}%</span>
             </div>
-            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "#E4E3F2" }}>
-              <div className="h-full rounded-full" style={{ width: `${prob}%`, background: "linear-gradient(90deg, #16E0BD, #6D3EF5)" }} />
+            <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(31, 40, 71, 0.8)" }}>
+              <div className="h-full rounded-full" style={{ width: `${prob}%`, background: "linear-gradient(90deg, #00D9FF, #8B5CF6)" }} />
             </div>
           </div>
 
@@ -1798,12 +1016,11 @@ function PatientDrawer({ patient, onClose }) {
             <InfoRow label="Admission Type" value={patient["Admission Type"]} />
             <InfoRow label="Doctor" value={patient.Doctor} />
             <InfoRow label="Hospital" value={patient.Hospital} />
-            <InfoRow label="Room" value={patient["Room Number"]} />
             <InfoRow label="Medication" value={patient.Medication} />
             <InfoRow label="Test Result" value={patient["Test Results"]} />
           </Section>
 
-          <Section icon={ShieldCheck} title="Coverage &amp; Billing">
+          <Section icon={ShieldCheck} title="Coverage & Billing">
             <InfoRow label="Insurance" value={patient["Insurance Provider"]} />
             <InfoRow label="Billing Amount" value={`₹${Number(patient["Billing Amount"]).toLocaleString("en-IN")}`} />
             <InfoRow label="Admitted" value={patient["Date of Admission"] || "—"} />
@@ -1813,7 +1030,7 @@ function PatientDrawer({ patient, onClose }) {
           <Section icon={AlertTriangle} title="AI Recommendations">
             <ul className="flex flex-col gap-2">
               {recs.map((r, i) => (
-                <li key={i} className="text-sm flex gap-2">
+                <li key={i} className="text-sm flex gap-2" style={{ color: "#A0A9C9" }}>
                   <span style={{ color: "#F59E0B" }}>●</span>
                   <span>{r}</span>
                 </li>
@@ -1824,22 +1041,22 @@ function PatientDrawer({ patient, onClose }) {
           <Section icon={CalendarClock} title="Outreach Strategy">
             <div className="flex flex-col gap-3">
               <div>
-                <p className="text-xs font-semibold mb-1" style={{ color: "#6D3EF5" }}>FOLLOW-UP TIMING</p>
-                <p className="text-sm">{timing}</p>
+                <p className="text-xs font-semibold mb-1" style={{ color: "#8B5CF6" }}>FOLLOW-UP TIMING</p>
+                <p className="text-sm" style={{ color: "#A0A9C9" }}>{timing}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold mb-1.5" style={{ color: "#6D3EF5" }}>CHANNEL MIX</p>
+                <p className="text-xs font-semibold mb-1.5" style={{ color: "#8B5CF6" }}>CHANNEL MIX</p>
                 <div className="flex flex-wrap gap-1.5">
                   {channels.map((c) => (
-                    <span key={c} className="text-xs px-2.5 py-1 rounded-full" style={{ background: "#F0EDFF", color: "#6D3EF5", fontWeight: 500 }}>
+                    <span key={c} className="text-xs px-2.5 py-1 rounded-full" style={{ background: "rgba(42, 31, 75, 0.8)", color: "#00D9FF", fontWeight: 500 }}>
                       {c}
                     </span>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="text-xs font-semibold mb-1" style={{ color: "#6D3EF5" }}>CONTENT STRATEGY</p>
-                <p className="text-sm">{strategy}</p>
+                <p className="text-xs font-semibold mb-1" style={{ color: "#8B5CF6" }}>CONTENT STRATEGY</p>
+                <p className="text-sm" style={{ color: "#A0A9C9" }}>{strategy}</p>
               </div>
             </div>
           </Section>
@@ -1849,12 +1066,12 @@ function PatientDrawer({ patient, onClose }) {
               {timeline.map((ev, i) => (
                 <div key={i} className="flex gap-3 pb-3 relative">
                   {i !== timeline.length - 1 && (
-                    <span className="absolute left-[5px] top-3 bottom-0 w-px" style={{ background: "#E4E3F2" }} />
+                    <span className="absolute left-[5px] top-3 bottom-0 w-px" style={{ background: "#2A3F5F" }} />
                   )}
-                  <span className="w-2.5 h-2.5 rounded-full mt-1 shrink-0" style={{ background: "#0EA394" }} />
+                  <span className="w-2.5 h-2.5 rounded-full mt-1 shrink-0" style={{ background: "#00D9FF" }} />
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium">{ev.label}</span>
-                    <span className="text-xs" style={{ color: "#8B8AA6" }}>
+                    <span className="text-sm font-medium" style={{ color: "#F0F4FF" }}>{ev.label}</span>
+                    <span className="text-xs" style={{ color: "#7A82A0" }}>
                       {ev.detail} {ev.date && `· ${ev.date}`}
                     </span>
                   </div>
@@ -1864,9 +1081,9 @@ function PatientDrawer({ patient, onClose }) {
           </Section>
 
           <Section icon={Mail} title="Automated Outreach Draft">
-            <div className="border rounded-lg p-3 text-sm bg-white/60" style={{ borderColor: "#E4E3F2" }}>
-              <p className="font-medium mb-1">{email.subject}</p>
-              <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed" style={{ color: "#2C2C46" }}>
+            <div className="border rounded-lg p-3 text-sm" style={{ borderColor: "#2A3F5F", background: "rgba(31, 40, 71, 0.3)" }}>
+              <p className="font-medium mb-1" style={{ color: "#F0F4FF" }}>{email.subject}</p>
+              <pre className="whitespace-pre-wrap font-sans text-xs leading-relaxed" style={{ color: "#A0A9C9" }}>
                 {email.body}
               </pre>
             </div>
@@ -1881,8 +1098,8 @@ function Section({ icon: Icon, title, children }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <Icon size={15} color="#0EA394" />
-        <h3 className="text-sm font-semibold" style={{ color: "#17172C" }}>{title}</h3>
+        <Icon size={15} color="#00D9FF" />
+        <h3 className="text-sm font-semibold" style={{ color: "#F0F4FF" }}>{title}</h3>
       </div>
       {children}
     </div>
@@ -1891,8 +1108,8 @@ function Section({ icon: Icon, title, children }) {
 
 function InfoRow({ label, value }) {
   return (
-    <div className="flex justify-between text-sm py-1 border-b" style={{ borderColor: "#ECEBF7" }}>
-      <span style={{ color: "#8B8AA6" }}>{label}</span>
+    <div className="flex justify-between text-sm py-1 border-b" style={{ borderColor: "#2A3F5F", color: "#F0F4FF" }}>
+      <span style={{ color: "#7A82A0" }}>{label}</span>
       <span style={{ fontWeight: 500 }}>{value}</span>
     </div>
   );
