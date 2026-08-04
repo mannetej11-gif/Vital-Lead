@@ -1,4 +1,4 @@
-# VitalHub - Unified Healthcare & CRM Platform
+# Vital-lead - Unified Healthcare & CRM Platform
 
 **All-in-One application combining Healthcare CRM, Sales CRM, and JWT Authentication.**
 
