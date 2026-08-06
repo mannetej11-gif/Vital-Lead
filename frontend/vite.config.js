@@ -5,12 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    host: true,
-    cors: true
+    host: true
   },
   build: {
     outDir: 'dist',
-    sourcemap: false,
-    minify: 'terser'
+    minify: false
   }
 })
