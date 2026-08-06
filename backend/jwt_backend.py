@@ -9,14 +9,18 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import sqlite3
 import datetime
+import os
 from functools import wraps
 
 app = Flask(__name__)
 
 # ====== CONFIGURATION ======
-app.config['JWT_SECRET_KEY'] = 'your-secret-key-change-this-in-production'
+app.config['JWT_SECRET_KEY'] = os.environ.get(
+    'JWT_SECRET_KEY',
+    'your-secret-key-change-this-in-production'
+)
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=24)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 
 # Initialize extensions
 jwt = JWTManager(app)
@@ -30,7 +34,7 @@ def init_db():
     """Initialize SQLite database"""
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
-    
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +47,7 @@ def init_db():
             last_login TIMESTAMP
         )
     ''')
-    
+
     conn.commit()
     conn.close()
 
@@ -52,6 +56,9 @@ def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+# Initialize database when app starts
+init_db()
 
 # ====== AUTHENTICATION ROUTES ======
 
@@ -264,16 +271,16 @@ def server_error(error):
 def health():
     return jsonify({'status': 'VitalLead JWT API is running'}), 200
 
-
 # ====== RUN APP ======
 
 if __name__ == '__main__':
-    init_db()
-    print("✅ VitalLead JWT Backend running on http://localhost:5000")
+    print("✅ VitalLead JWT Backend running")
     print("📚 API Routes:")
-    print("   POST   /auth/register  - Register new user")
-    print("   POST   /auth/login     - Login & get JWT token")
-    print("   GET    /auth/profile   - Get user profile (requires token)")
-    print("   POST   /auth/refresh   - Refresh JWT token")
-    print("   POST   /auth/logout    - Logout user")
-    app.run(debug=True, port=5000)
+    print("   POST   /auth/register")
+    print("   POST   /auth/login")
+    print("   GET    /auth/profile")
+    print("   POST   /auth/refresh")
+    print("   POST   /auth/logout")
+
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
