@@ -17,10 +17,11 @@
     "lucide-react": "^0.294.0",
     "papaparse": "^5.4.1"
   },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.8"
-  },
+"devDependencies": {
+  "@vitejs/plugin-react": "^4.2.1",
+  "vite": "^5.0.8",
+  "terser": "^5.30.0"
+}
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=8.0.0"
