@@ -10,7 +10,7 @@ import {
   PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from "recharts";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://vital-lead-production.up.railway.app";
 
 // ====== PATIENT DATA ======
 const MOCK_PATIENTS = [
