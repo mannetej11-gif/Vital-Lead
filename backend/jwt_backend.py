@@ -177,13 +177,9 @@ def login():
         conn.close()
         
         # Generate JWT token
-        access_token = create_access_token(
-            identity={
-                'user_id': user['id'],
-                'username': user['username'],
-                'role': user['role']
-            }
-        )
+access_token = create_access_token(
+    identity=str(user['id'])
+)
         
         return jsonify({
             'success': True,
@@ -204,20 +200,23 @@ def login():
 @app.route('/auth/profile', methods=['GET'])
 @jwt_required()
 def get_profile():
-    """Get current user profile (protected route)"""
     try:
-        current_user = get_jwt_identity()
-        
+        user_id = get_jwt_identity()
+
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute('SELECT id, username, email, full_name, role, created_at FROM users WHERE id = ?', 
-                      (current_user['user_id'],))
+
+        cursor.execute(
+            'SELECT id, username, email, full_name, role, created_at FROM users WHERE id = ?',
+            (user_id,)
+        )
+
         user = cursor.fetchone()
         conn.close()
-        
+
         if not user:
             return jsonify({'error': 'User not found'}), 404
-        
+
         return jsonify({
             'id': user['id'],
             'username': user['username'],
@@ -226,27 +225,57 @@ def get_profile():
             'role': user['role'],
             'created_at': user['created_at']
         }), 200
-    
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500@app.route('/auth/profile', methods=['GET'])
+@jwt_required()
+def get_profile():
+    try:
+        user_id = get_jwt_identity()
+
+        conn = get_db()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            'SELECT id, username, email, full_name, role, created_at FROM users WHERE id = ?',
+            (user_id,)
+        )
+
+        user = cursor.fetchone()
+        conn.close()
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        return jsonify({
+            'id': user['id'],
+            'username': user['username'],
+            'email': user['email'],
+            'full_name': user['full_name'],
+            'role': user['role'],
+            'created_at': user['created_at']
+        }), 200
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/auth/refresh', methods=['POST'])
 @jwt_required()
 def refresh_token():
-    """Refresh JWT token"""
     try:
-        current_user = get_jwt_identity()
-        new_token = create_access_token(identity=current_user)
-        
+        user_id = get_jwt_identity()
+
+        new_token = create_access_token(
+            identity=user_id
+        )
+
         return jsonify({
             'success': True,
             'access_token': new_token
         }), 200
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/auth/logout', methods=['POST'])
 @jwt_required()
