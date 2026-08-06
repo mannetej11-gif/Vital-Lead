@@ -10,7 +10,7 @@ from flask_cors import CORS
 import sqlite3
 import datetime
 import os
-from functools import wraps
+
 
 app = Flask(__name__)
 
@@ -68,119 +68,94 @@ init_db()
 
 @app.route('/auth/register', methods=['POST'])
 def register():
-    """
-    Register a new user
-    
-    Request:
-    {
-        "username": "manne",
-        "email": "manne@example.com",
-        "password": "secure_password",
-        "full_name": "Manne Sai Teja"
-    }
-    """
     try:
         data = request.get_json()
-        
-        # Validate input
+
         if not data or not all(k in data for k in ['username', 'email', 'password']):
             return jsonify({'error': 'Missing required fields'}), 400
-        
+
         username = data['username'].strip()
         email = data['email'].strip()
         password = data['password']
         full_name = data.get('full_name', username)
-        
-        # Validate password strength
+
         if len(password) < 6:
             return jsonify({'error': 'Password must be at least 6 characters'}), 400
-        
-        # Hash password
+
         password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-        
-        # Insert into database
+
         conn = get_db()
         cursor = conn.cursor()
-        
+
         try:
             cursor.execute(
-                'INSERT INTO users (username, email, password_hash, full_name, role) VALUES (?, ?, ?, ?, ?)',
+                '''
+                INSERT INTO users
+                (username, email, password_hash, full_name, role)
+                VALUES (?, ?, ?, ?, ?)
+                ''',
                 (username, email, password_hash, full_name, 'user')
             )
+
             conn.commit()
-            user_id = cursor.lastrowid
-            
+
             return jsonify({
                 'success': True,
                 'message': 'User registered successfully',
-                'user_id': user_id,
+                'user_id': cursor.lastrowid,
                 'username': username
             }), 201
-            
+
         except sqlite3.IntegrityError:
             return jsonify({'error': 'Username or email already exists'}), 409
+
         finally:
             conn.close()
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
 @app.route('/auth/login', methods=['POST'])
 def login():
-    """
-    Login and get JWT token
-    
-    Request:
-    {
-        "username": "manne",
-        "password": "secure_password"
-    }
-    
-    Response:
-    {
-        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
-        "user": {
-            "id": 1,
-            "username": "manne",
-            "email": "manne@example.com",
-            "full_name": "Manne Sai Teja"
-        }
-    }
-    """
     try:
         data = request.get_json()
-        
+
         if not data or not all(k in data for k in ['username', 'password']):
             return jsonify({'error': 'Missing username or password'}), 400
-        
+
         username = data['username']
         password = data['password']
-        
-        # Find user in database
+
         conn = get_db()
         cursor = conn.cursor()
-        
-        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+
+        cursor.execute(
+            'SELECT * FROM users WHERE username = ?',
+            (username,)
+        )
+
         user = cursor.fetchone()
-        
-        if not user or not bcrypt.check_password_hash(user['password_hash'], password):
+
+        if not user or not bcrypt.check_password_hash(
+            user['password_hash'],
+            password
+        ):
             conn.close()
             return jsonify({'error': 'Invalid username or password'}), 401
-        
-        # Update last login
+
         cursor.execute(
             'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
             (user['id'],)
         )
+
         conn.commit()
         conn.close()
-        
-        # Generate JWT token
-access_token = create_access_token(
-    identity=str(user['id'])
-)
-        
+
+        access_token = create_access_token(
+            identity=str(user['id'])
+        )
+
         return jsonify({
             'success': True,
             'access_token': access_token,
@@ -192,7 +167,7 @@ access_token = create_access_token(
                 'role': user['role']
             }
         }), 200
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -201,43 +176,23 @@ access_token = create_access_token(
 @jwt_required()
 def get_profile():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
 
         conn = get_db()
         cursor = conn.cursor()
 
         cursor.execute(
-            'SELECT id, username, email, full_name, role, created_at FROM users WHERE id = ?',
-            (user_id,)
-        )
-
-        user = cursor.fetchone()
-        conn.close()
-
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-
-        return jsonify({
-            'id': user['id'],
-            'username': user['username'],
-            'email': user['email'],
-            'full_name': user['full_name'],
-            'role': user['role'],
-            'created_at': user['created_at']
-        }), 200
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500@app.route('/auth/profile', methods=['GET'])
-@jwt_required()
-def get_profile():
-    try:
-        user_id = get_jwt_identity()
-
-        conn = get_db()
-        cursor = conn.cursor()
-
-        cursor.execute(
-            'SELECT id, username, email, full_name, role, created_at FROM users WHERE id = ?',
+            '''
+            SELECT
+                id,
+                username,
+                email,
+                full_name,
+                role,
+                created_at
+            FROM users
+            WHERE id = ?
+            ''',
             (user_id,)
         )
 
@@ -258,6 +213,7 @@ def get_profile():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/auth/refresh', methods=['POST'])
 @jwt_required()
@@ -277,21 +233,19 @@ def refresh_token():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/auth/logout', methods=['POST'])
 @jwt_required()
 def logout():
-    """Logout user (invalidate token on client side)"""
     return jsonify({
         'success': True,
         'message': 'Logged out successfully'
     }), 200
 
-
-# ====== ERROR HANDLERS ======
-
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Route not found'}), 404
+
 
 @app.errorhandler(500)
 def server_error(error):
