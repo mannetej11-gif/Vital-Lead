@@ -25,8 +25,12 @@ app.config['DEBUG'] = False
 # Initialize extensions
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
-CORS(app)
 
+CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    supports_credentials=True
+)
 # ====== DATABASE SETUP ======
 DATABASE = 'vitallead_users.db'
 
@@ -264,12 +268,22 @@ def not_found(error):
 def server_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
+# ====== HOME ROUTE ======
+
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        'status': 'VitalLead API Running',
+        'message': 'Backend is working successfully'
+    }), 200
+
 
 # ====== HEALTH CHECK ======
 
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'VitalLead JWT API is running'}), 200
+
 
 # ====== RUN APP ======
 
